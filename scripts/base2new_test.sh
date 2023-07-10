@@ -3,7 +3,7 @@
 cd ..
 
 # custom config
-DATA=/home/ducan/Downloads/MinhAnh/CoOp/DATA
+DATA=/home/svosve/Music/ma/ResPro/DATA
 TRAINER=ResidualPrompting
 # TRAINER=CoOp
 # TRAINER=KgCoOp
