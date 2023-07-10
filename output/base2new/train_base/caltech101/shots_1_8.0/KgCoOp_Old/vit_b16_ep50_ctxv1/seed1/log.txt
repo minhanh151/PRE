@@ -1,0 +1,351 @@
+***************
+** Arguments **
+***************
+backbone: 
+config_file: configs/trainers/KgCoOp/vit_b16_ep50_ctxv1.yaml
+dataset_config_file: configs/datasets/caltech101.yaml
+eval_only: False
+head: 
+load_epoch: None
+model_dir: 
+no_train: False
+opts: ['TRAINER.COOP.N_CTX', '4', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.W', '8.0', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'DATASET.NUM_SHOTS', '1', 'DATASET.SUBSAMPLE_CLASSES', 'base']
+output_dir: output/base2new/train_base/caltech101/shots_1_8.0/KgCoOp/vit_b16_ep50_ctxv1/seed1
+resume: 
+root: /home/ducan/Downloads/MinhAnh/CoOp/DATA
+seed: 1
+source_domains: None
+target_domains: None
+trainer: KgCoOp
+transforms: None
+************
+** Config **
+************
+DATALOADER:
+  K_TRANSFORMS: 1
+  NUM_WORKERS: 8
+  RETURN_IMG0: False
+  TEST:
+    BATCH_SIZE: 100
+    SAMPLER: SequentialSampler
+  TRAIN_U:
+    BATCH_SIZE: 32
+    N_DOMAIN: 0
+    N_INS: 16
+    SAME_AS_X: True
+    SAMPLER: RandomSampler
+  TRAIN_X:
+    BATCH_SIZE: 128
+    N_DOMAIN: 0
+    N_INS: 16
+    SAMPLER: RandomSampler
+DATASET:
+  ALL_AS_UNLABELED: False
+  CIFAR_C_LEVEL: 1
+  CIFAR_C_TYPE: 
+  NAME: Caltech101
+  NUM_LABELED: -1
+  NUM_SHOTS: 1
+  ROOT: /home/ducan/Downloads/MinhAnh/CoOp/DATA
+  SOURCE_DOMAINS: ()
+  STL10_FOLD: -1
+  SUBSAMPLE_CLASSES: base
+  TARGET_DOMAINS: ()
+  VAL_PERCENT: 0.1
+INPUT:
+  COLORJITTER_B: 0.4
+  COLORJITTER_C: 0.4
+  COLORJITTER_H: 0.1
+  COLORJITTER_S: 0.4
+  CROP_PADDING: 4
+  CUTOUT_LEN: 16
+  CUTOUT_N: 1
+  GB_K: 21
+  GB_P: 0.5
+  GN_MEAN: 0.0
+  GN_STD: 0.15
+  INTERPOLATION: bicubic
+  NO_TRANSFORM: False
+  PIXEL_MEAN: [0.48145466, 0.4578275, 0.40821073]
+  PIXEL_STD: [0.26862954, 0.26130258, 0.27577711]
+  RANDAUGMENT_M: 10
+  RANDAUGMENT_N: 2
+  RGS_P: 0.2
+  RRCROP_SCALE: (0.08, 1.0)
+  SIZE: (224, 224)
+  TRANSFORMS: ('random_resized_crop', 'random_flip', 'normalize')
+LOSS:
+  ALPHA: 0.0
+  GM: False
+  LAMBDA: 1.0
+  NAME: 
+  T: 1.0
+MODEL:
+  BACKBONE:
+    NAME: ViT-B/16
+    PRETRAINED: True
+  HEAD:
+    ACTIVATION: relu
+    BN: True
+    DROPOUT: 0.0
+    HIDDEN_LAYERS: ()
+    NAME: 
+  INIT_WEIGHTS: 
+OPTIM:
+  ADAM_BETA1: 0.9
+  ADAM_BETA2: 0.999
+  BASE_LR_MULT: 0.1
+  GAMMA: 0.1
+  LR: 0.002
+  LR_SCHEDULER: cosine
+  MAX_EPOCH: 50
+  MOMENTUM: 0.9
+  NAME: sgd
+  NEW_LAYERS: ()
+  RMSPROP_ALPHA: 0.99
+  SGD_DAMPNING: 0
+  SGD_NESTEROV: False
+  STAGED_LR: False
+  STEPSIZE: (-1,)
+  WARMUP_CONS_LR: 1e-05
+  WARMUP_EPOCH: 1
+  WARMUP_MIN_LR: 1e-05
+  WARMUP_RECOUNT: True
+  WARMUP_TYPE: constant
+  WEIGHT_DECAY: 0.0005
+OUTPUT_DIR: output/base2new/train_base/caltech101/shots_1_8.0/KgCoOp/vit_b16_ep50_ctxv1/seed1
+RESUME: 
+SEED: 1
+TEST:
+  COMPUTE_CMAT: False
+  EVALUATOR: Classification
+  FINAL_MODEL: last_step
+  NO_TEST: False
+  PER_CLASS_RESULT: False
+  SPLIT: test
+TRAIN:
+  CHECKPOINT_FREQ: 0
+  COUNT_ITER: train_x
+  PRINT_FREQ: 5
+TRAINER:
+  CDAC:
+    CLASS_LR_MULTI: 10
+    P_THRESH: 0.95
+    RAMPUP_COEF: 30
+    RAMPUP_ITRS: 1000
+    STRONG_TRANSFORMS: ()
+    TOPK_MATCH: 5
+  COCOOP:
+    CTX_INIT: 
+    N_CTX: 16
+    PREC: amp
+  COOP:
+    ALPHA: 1.0
+    CLASS_TOKEN_POSITION: end
+    CSC: False
+    CTX_INIT: a photo of a
+    N_CTX: 4
+    PREC: amp
+    W: 8.0
+  CROSSGRAD:
+    ALPHA_D: 0.5
+    ALPHA_F: 0.5
+    EPS_D: 1.0
+    EPS_F: 1.0
+  DAEL:
+    CONF_THRE: 0.95
+    STRONG_TRANSFORMS: ()
+    WEIGHT_U: 0.5
+  DAELDG:
+    CONF_THRE: 0.95
+    STRONG_TRANSFORMS: ()
+    WEIGHT_U: 0.5
+  DDAIG:
+    ALPHA: 0.5
+    CLAMP: False
+    CLAMP_MAX: 1.0
+    CLAMP_MIN: -1.0
+    G_ARCH: 
+    LMDA: 0.3
+    WARMUP: 0
+  DOMAINMIX:
+    ALPHA: 1.0
+    BETA: 1.0
+    TYPE: crossdomain
+  ENTMIN:
+    LMDA: 0.001
+  FIXMATCH:
+    CONF_THRE: 0.95
+    STRONG_TRANSFORMS: ()
+    WEIGHT_U: 1.0
+  M3SDA:
+    LMDA: 0.5
+    N_STEP_F: 4
+  MCD:
+    N_STEP_F: 4
+  MEANTEACHER:
+    EMA_ALPHA: 0.999
+    RAMPUP: 5
+    WEIGHT_U: 1.0
+  MIXMATCH:
+    MIXUP_BETA: 0.75
+    RAMPUP: 20000
+    TEMP: 2.0
+    WEIGHT_U: 100.0
+  MME:
+    LMDA: 0.1
+  NAME: KgCoOp
+  PLOT:
+    CLASS_TOKEN_POSITION: end
+    CSC: False
+    CTX_INIT: 
+    N: 4
+    N_CTX: 16
+    PREC: amp
+  ResidualPrompting:
+    CLASS_TOKEN_POSITION: end
+    CSC: False
+    CTX_INIT: 
+    N_CTX: 16
+    PREC: amp
+  SE:
+    CONF_THRE: 0.95
+    EMA_ALPHA: 0.999
+    RAMPUP: 300
+USE_CUDA: True
+VERBOSE: True
+VERSION: 1
+Collecting env info ...
+** System info **
+PyTorch version: 1.10.2
+Is debug build: False
+CUDA used to build PyTorch: 10.2
+ROCM used to build PyTorch: N/A
+
+OS: Ubuntu 20.04.5 LTS (x86_64)
+GCC version: (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0
+Clang version: Could not collect
+CMake version: version 3.16.3
+Libc version: glibc-2.31
+
+Python version: 3.8.16 (default, Jun 12 2023, 18:09:05)  [GCC 11.2.0] (64-bit runtime)
+Python platform: Linux-5.15.0-76-generic-x86_64-with-glibc2.17
+Is CUDA available: False
+CUDA runtime version: 12.2.91
+GPU models and configuration: Could not collect
+Nvidia driver version: Could not collect
+cuDNN version: Could not collect
+HIP runtime version: N/A
+MIOpen runtime version: N/A
+
+Versions of relevant libraries:
+[pip3] numpy==1.24.2
+[pip3] torch==1.10.2
+[pip3] torchvision==0.11.3
+[conda] blas                      1.0                         mkl  
+[conda] cudatoolkit               10.2.89              hfd86e86_1  
+[conda] ffmpeg                    4.3                  hf484d3e_0    pytorch
+[conda] mkl                       2023.1.0         h6d00ec8_46342  
+[conda] mkl-service               2.4.0            py38h5eee18b_1  
+[conda] mkl_fft                   1.3.6            py38h417a72b_1  
+[conda] mkl_random                1.2.2            py38h417a72b_1  
+[conda] numpy                     1.24.3           py38hf6e8229_1  
+[conda] numpy-base                1.24.3           py38h060ed82_1  
+[conda] pytorch                   1.10.2          py3.8_cuda10.2_cudnn7.6.5_0    pytorch
+[conda] pytorch-mutex             1.0                        cuda    pytorch
+[conda] torchvision               0.11.3               py38_cu102    pytorch
+        Pillow (9.4.0)
+
+Loading trainer: KgCoOp
+Loading dataset: Caltech101
+Reading split from /home/ducan/Downloads/MinhAnh/CoOp/DATA/caltech-101/split_zhou_Caltech101.json
+Loading preprocessed few-shot data from /home/ducan/Downloads/MinhAnh/CoOp/DATA/caltech-101/split_fewshot/shot_1-seed_1.pkl
+SUBSAMPLE BASE CLASSES!
+Building transform_train
++ random resized crop (size=(224, 224), scale=(0.08, 1.0))
++ random flip
++ to torch tensor of range [0, 1]
++ normalization (mean=[0.48145466, 0.4578275, 0.40821073], std=[0.26862954, 0.26130258, 0.27577711])
+Building transform_test
++ resize the smaller edge to 224
++ 224x224 center crop
++ to torch tensor of range [0, 1]
++ normalization (mean=[0.48145466, 0.4578275, 0.40821073], std=[0.26862954, 0.26130258, 0.27577711])
+---------  ----------
+Dataset    Caltech101
+# classes  50
+# train_x  50
+# val      50
+# test     1,549
+---------  ----------
+Loading CLIP (backbone: ViT-B/16)
+Building custom CLIP
+Initial context: "a photo of a"
+Number of context words (tokens): 4
+Prompts: ['a photo of a face.', 'a photo of a leopard.', 'a photo of a motorbike.', 'a photo of a accordion.', 'a photo of a airplane.', 'a photo of a anchor.', 'a photo of a ant.', 'a photo of a barrel.', 'a photo of a bass.', 'a photo of a beaver.', 'a photo of a binocular.', 'a photo of a bonsai.', 'a photo of a brain.', 'a photo of a brontosaurus.', 'a photo of a buddha.', 'a photo of a butterfly.', 'a photo of a camera.', 'a photo of a cannon.', 'a photo of a car side.', 'a photo of a ceiling fan.', 'a photo of a cellphone.', 'a photo of a chair.', 'a photo of a chandelier.', 'a photo of a cougar body.', 'a photo of a cougar face.', 'a photo of a crab.', 'a photo of a crayfish.', 'a photo of a crocodile.', 'a photo of a crocodile head.', 'a photo of a cup.', 'a photo of a dalmatian.', 'a photo of a dollar bill.', 'a photo of a dolphin.', 'a photo of a dragonfly.', 'a photo of a electric guitar.', 'a photo of a elephant.', 'a photo of a emu.', 'a photo of a euphonium.', 'a photo of a ewer.', 'a photo of a ferry.', 'a photo of a flamingo.', 'a photo of a flamingo head.', 'a photo of a garfield.', 'a photo of a gerenuk.', 'a photo of a gramophone.', 'a photo of a grand piano.', 'a photo of a hawksbill.', 'a photo of a headphone.', 'a photo of a hedgehog.', 'a photo of a helicopter.']
+Turning off gradients in both the image and the text encoder
+prompt_learner.ctx
+Loading evaluator: Classification
+No checkpoint found, train from scratch
+Initialize tensorboard (log_dir=output/base2new/train_base/caltech101/shots_1_8.0/KgCoOp/vit_b16_ep50_ctxv1/seed1/tensorboard)
+epoch [1/50] batch [1/1] time 18.594 (18.594) data 0.353 (0.353) loss 0.6592 (0.6592) acc 80.0000 (80.0000) lr 1.0000e-05 eta 0:15:11
+epoch [2/50] batch [1/1] time 18.358 (18.358) data 0.464 (0.464) loss 0.8165 (0.8165) acc 72.0000 (72.0000) lr 9.9803e-06 eta 0:14:41
+epoch [3/50] batch [1/1] time 19.164 (19.164) data 0.438 (0.438) loss 0.7464 (0.7464) acc 78.0000 (78.0000) lr 9.9213e-06 eta 0:15:00
+epoch [4/50] batch [1/1] time 19.241 (19.241) data 0.439 (0.439) loss 0.5648 (0.5648) acc 84.0000 (84.0000) lr 9.8237e-06 eta 0:14:45
+epoch [5/50] batch [1/1] time 19.077 (19.077) data 0.440 (0.440) loss 0.6275 (0.6275) acc 84.0000 (84.0000) lr 9.6883e-06 eta 0:14:18
+epoch [6/50] batch [1/1] time 19.113 (19.113) data 0.439 (0.439) loss 0.9958 (0.9958) acc 74.0000 (74.0000) lr 9.5166e-06 eta 0:14:00
+epoch [7/50] batch [1/1] time 19.180 (19.180) data 0.432 (0.432) loss 0.6771 (0.6771) acc 82.0000 (82.0000) lr 9.3101e-06 eta 0:13:44
+epoch [8/50] batch [1/1] time 19.148 (19.148) data 0.472 (0.472) loss 1.0020 (1.0020) acc 72.0000 (72.0000) lr 9.0709e-06 eta 0:13:24
+epoch [9/50] batch [1/1] time 19.308 (19.308) data 0.430 (0.430) loss 0.7430 (0.7430) acc 74.0000 (74.0000) lr 8.8013e-06 eta 0:13:11
+epoch [10/50] batch [1/1] time 19.187 (19.187) data 0.452 (0.452) loss 0.6159 (0.6159) acc 80.0000 (80.0000) lr 8.5039e-06 eta 0:12:47
+epoch [11/50] batch [1/1] time 19.318 (19.318) data 0.434 (0.434) loss 0.7118 (0.7118) acc 80.0000 (80.0000) lr 8.1814e-06 eta 0:12:33
+epoch [12/50] batch [1/1] time 19.214 (19.214) data 0.453 (0.453) loss 0.5946 (0.5946) acc 82.0000 (82.0000) lr 7.8368e-06 eta 0:12:10
+epoch [13/50] batch [1/1] time 19.167 (19.167) data 0.440 (0.440) loss 0.7129 (0.7129) acc 78.0000 (78.0000) lr 7.4733e-06 eta 0:11:49
+epoch [14/50] batch [1/1] time 19.124 (19.124) data 0.445 (0.445) loss 0.8153 (0.8153) acc 76.0000 (76.0000) lr 7.0942e-06 eta 0:11:28
+epoch [15/50] batch [1/1] time 19.131 (19.131) data 0.430 (0.430) loss 0.6808 (0.6808) acc 78.0000 (78.0000) lr 6.7029e-06 eta 0:11:09
+epoch [16/50] batch [1/1] time 19.138 (19.138) data 0.444 (0.444) loss 0.6971 (0.6971) acc 80.0000 (80.0000) lr 6.3027e-06 eta 0:10:50
+epoch [17/50] batch [1/1] time 19.111 (19.111) data 0.453 (0.453) loss 0.5571 (0.5571) acc 82.0000 (82.0000) lr 5.8969e-06 eta 0:10:30
+epoch [18/50] batch [1/1] time 19.104 (19.104) data 0.453 (0.453) loss 0.5976 (0.5976) acc 82.0000 (82.0000) lr 5.4890e-06 eta 0:10:11
+epoch [19/50] batch [1/1] time 19.197 (19.197) data 0.473 (0.473) loss 0.8228 (0.8228) acc 82.0000 (82.0000) lr 5.0821e-06 eta 0:09:55
+epoch [20/50] batch [1/1] time 19.141 (19.141) data 0.444 (0.444) loss 0.6695 (0.6695) acc 80.0000 (80.0000) lr 4.6794e-06 eta 0:09:34
+epoch [21/50] batch [1/1] time 19.172 (19.172) data 0.450 (0.450) loss 1.0284 (1.0284) acc 72.0000 (72.0000) lr 4.2838e-06 eta 0:09:15
+epoch [22/50] batch [1/1] time 19.202 (19.202) data 0.459 (0.459) loss 0.3769 (0.3769) acc 90.0000 (90.0000) lr 3.8981e-06 eta 0:08:57
+epoch [23/50] batch [1/1] time 19.209 (19.209) data 0.446 (0.446) loss 0.7190 (0.7190) acc 84.0000 (84.0000) lr 3.5247e-06 eta 0:08:38
+epoch [24/50] batch [1/1] time 19.069 (19.069) data 0.450 (0.450) loss 0.5124 (0.5124) acc 84.0000 (84.0000) lr 3.1659e-06 eta 0:08:15
+epoch [25/50] batch [1/1] time 19.165 (19.165) data 0.451 (0.451) loss 0.7873 (0.7873) acc 76.0000 (76.0000) lr 2.8238e-06 eta 0:07:59
+epoch [26/50] batch [1/1] time 19.189 (19.189) data 0.452 (0.452) loss 0.6967 (0.6967) acc 80.0000 (80.0000) lr 2.5000e-06 eta 0:07:40
+epoch [27/50] batch [1/1] time 19.289 (19.289) data 0.440 (0.440) loss 0.6471 (0.6471) acc 82.0000 (82.0000) lr 2.1959e-06 eta 0:07:23
+epoch [28/50] batch [1/1] time 19.132 (19.132) data 0.466 (0.466) loss 0.8647 (0.8647) acc 68.0000 (68.0000) lr 1.9126e-06 eta 0:07:00
+epoch [29/50] batch [1/1] time 19.176 (19.176) data 0.445 (0.445) loss 0.6332 (0.6332) acc 84.0000 (84.0000) lr 1.6509e-06 eta 0:06:42
+epoch [30/50] batch [1/1] time 19.168 (19.168) data 0.443 (0.443) loss 0.6346 (0.6346) acc 80.0000 (80.0000) lr 1.4112e-06 eta 0:06:23
+epoch [31/50] batch [1/1] time 19.230 (19.230) data 0.447 (0.447) loss 0.7494 (0.7494) acc 82.0000 (82.0000) lr 1.1936e-06 eta 0:06:05
+epoch [32/50] batch [1/1] time 19.187 (19.187) data 0.455 (0.455) loss 0.5989 (0.5989) acc 84.0000 (84.0000) lr 9.9817e-07 eta 0:05:45
+epoch [33/50] batch [1/1] time 19.164 (19.164) data 0.454 (0.454) loss 0.7217 (0.7217) acc 84.0000 (84.0000) lr 8.2432e-07 eta 0:05:25
+epoch [34/50] batch [1/1] time 19.150 (19.150) data 0.454 (0.454) loss 0.7363 (0.7363) acc 80.0000 (80.0000) lr 6.7145e-07 eta 0:05:06
+epoch [35/50] batch [1/1] time 19.184 (19.184) data 0.451 (0.451) loss 0.6025 (0.6025) acc 80.0000 (80.0000) lr 5.3864e-07 eta 0:04:47
+epoch [36/50] batch [1/1] time 19.158 (19.158) data 0.466 (0.466) loss 0.6181 (0.6181) acc 86.0000 (86.0000) lr 4.2480e-07 eta 0:04:28
+epoch [37/50] batch [1/1] time 19.189 (19.189) data 0.451 (0.451) loss 0.9090 (0.9090) acc 76.0000 (76.0000) lr 3.2865e-07 eta 0:04:09
+epoch [38/50] batch [1/1] time 19.213 (19.213) data 0.441 (0.441) loss 1.0030 (1.0030) acc 74.0000 (74.0000) lr 2.4878e-07 eta 0:03:50
+epoch [39/50] batch [1/1] time 19.254 (19.254) data 0.460 (0.460) loss 0.6675 (0.6675) acc 82.0000 (82.0000) lr 1.8365e-07 eta 0:03:31
+epoch [40/50] batch [1/1] time 19.244 (19.244) data 0.453 (0.453) loss 0.4886 (0.4886) acc 84.0000 (84.0000) lr 1.3166e-07 eta 0:03:12
+epoch [41/50] batch [1/1] time 19.193 (19.193) data 0.445 (0.445) loss 0.7976 (0.7976) acc 76.0000 (76.0000) lr 9.1186e-08 eta 0:02:52
+epoch [42/50] batch [1/1] time 19.583 (19.583) data 0.459 (0.459) loss 0.7854 (0.7854) acc 72.0000 (72.0000) lr 6.0584e-08 eta 0:02:36
+epoch [43/50] batch [1/1] time 19.112 (19.112) data 0.438 (0.438) loss 0.6500 (0.6500) acc 80.0000 (80.0000) lr 3.8250e-08 eta 0:02:13
+epoch [44/50] batch [1/1] time 19.180 (19.180) data 0.454 (0.454) loss 0.9927 (0.9927) acc 76.0000 (76.0000) lr 2.2645e-08 eta 0:01:55
+epoch [45/50] batch [1/1] time 19.096 (19.096) data 0.447 (0.447) loss 0.7189 (0.7189) acc 78.0000 (78.0000) lr 1.2328e-08 eta 0:01:35
+epoch [46/50] batch [1/1] time 19.151 (19.151) data 0.464 (0.464) loss 0.8983 (0.8983) acc 72.0000 (72.0000) lr 5.9887e-09 eta 0:01:16
+epoch [47/50] batch [1/1] time 19.175 (19.175) data 0.442 (0.442) loss 0.7482 (0.7482) acc 76.0000 (76.0000) lr 2.4675e-09 eta 0:00:57
+epoch [48/50] batch [1/1] time 19.139 (19.139) data 0.467 (0.467) loss 0.8498 (0.8498) acc 76.0000 (76.0000) lr 7.8435e-10 eta 0:00:38
+epoch [49/50] batch [1/1] time 19.182 (19.182) data 0.445 (0.445) loss 0.9382 (0.9382) acc 74.0000 (74.0000) lr 1.5544e-10 eta 0:00:19
+epoch [50/50] batch [1/1] time 19.147 (19.147) data 0.474 (0.474) loss 0.6691 (0.6691) acc 76.0000 (76.0000) lr 9.7345e-12 eta 0:00:00
+Checkpoint saved to output/base2new/train_base/caltech101/shots_1_8.0/KgCoOp/vit_b16_ep50_ctxv1/seed1/prompt_learner/model.pth.tar-50
+Finish training
+Deploy the last-epoch model
+Evaluate on the *test* set
+=> result
+* total: 1,549
+* correct: 1,502
+* accuracy: 97.0%
+* error: 3.0%
+* macro_f1: 94.9%
+Elapsed: 0:23:31

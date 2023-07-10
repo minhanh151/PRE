@@ -1,0 +1,351 @@
+***************
+** Arguments **
+***************
+backbone: 
+config_file: configs/trainers/KgCoOp/vit_b16_ep100_ctxv1.yaml
+dataset_config_file: configs/datasets/fer2013.yaml
+eval_only: False
+head: 
+load_epoch: None
+model_dir: 
+no_train: False
+opts: ['TRAINER.COOP.N_CTX', '4', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.W', '8.0', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'DATASET.NUM_SHOTS', '1', 'DATASET.SUBSAMPLE_CLASSES', 'base']
+output_dir: output/base2new/train_base/fer2013/shots_1_8.0/KgCoOp/vit_b16_ep100_ctxv1/seed1
+resume: 
+root: /home/ducan/Downloads/MinhAnh/CoOp/DATA
+seed: 1
+source_domains: None
+target_domains: None
+trainer: KgCoOp
+transforms: None
+************
+** Config **
+************
+DATALOADER:
+  K_TRANSFORMS: 1
+  NUM_WORKERS: 8
+  RETURN_IMG0: False
+  TEST:
+    BATCH_SIZE: 100
+    SAMPLER: SequentialSampler
+  TRAIN_U:
+    BATCH_SIZE: 32
+    N_DOMAIN: 0
+    N_INS: 16
+    SAME_AS_X: True
+    SAMPLER: RandomSampler
+  TRAIN_X:
+    BATCH_SIZE: 128
+    N_DOMAIN: 0
+    N_INS: 16
+    SAMPLER: RandomSampler
+DATASET:
+  ALL_AS_UNLABELED: False
+  CIFAR_C_LEVEL: 1
+  CIFAR_C_TYPE: 
+  NAME: Fer2013
+  NUM_LABELED: -1
+  NUM_SHOTS: 1
+  ROOT: /home/ducan/Downloads/MinhAnh/CoOp/DATA
+  SOURCE_DOMAINS: ()
+  STL10_FOLD: -1
+  SUBSAMPLE_CLASSES: base
+  TARGET_DOMAINS: ()
+  VAL_PERCENT: 0.1
+INPUT:
+  COLORJITTER_B: 0.4
+  COLORJITTER_C: 0.4
+  COLORJITTER_H: 0.1
+  COLORJITTER_S: 0.4
+  CROP_PADDING: 4
+  CUTOUT_LEN: 16
+  CUTOUT_N: 1
+  GB_K: 21
+  GB_P: 0.5
+  GN_MEAN: 0.0
+  GN_STD: 0.15
+  INTERPOLATION: bicubic
+  NO_TRANSFORM: False
+  PIXEL_MEAN: [0.48145466, 0.4578275, 0.40821073]
+  PIXEL_STD: [0.26862954, 0.26130258, 0.27577711]
+  RANDAUGMENT_M: 10
+  RANDAUGMENT_N: 2
+  RGS_P: 0.2
+  SIZE: (224, 224)
+  TRANSFORMS: ('random_resized_crop', 'random_flip', 'normalize')
+LOSS:
+  ALPHA: 0.0
+  GM: False
+  LAMBDA: 1.0
+  NAME: 
+  T: 1.0
+MODEL:
+  BACKBONE:
+    NAME: ViT-B/16
+    PRETRAINED: True
+  HEAD:
+    ACTIVATION: relu
+    BN: True
+    DROPOUT: 0.0
+    HIDDEN_LAYERS: ()
+    NAME: 
+  INIT_WEIGHTS: 
+OPTIM:
+  ADAM_BETA1: 0.9
+  ADAM_BETA2: 0.999
+  BASE_LR_MULT: 0.1
+  GAMMA: 0.1
+  LR: 0.002
+  LR_SCHEDULER: cosine
+  MAX_EPOCH: 50
+  MOMENTUM: 0.9
+  NAME: sgd
+  NEW_LAYERS: ()
+  RMSPROP_ALPHA: 0.99
+  SGD_DAMPNING: 0
+  SGD_NESTEROV: False
+  STAGED_LR: False
+  STEPSIZE: (-1,)
+  WARMUP_CONS_LR: 1e-05
+  WARMUP_EPOCH: 1
+  WARMUP_MIN_LR: 1e-05
+  WARMUP_RECOUNT: True
+  WARMUP_TYPE: constant
+  WEIGHT_DECAY: 0.0005
+OUTPUT_DIR: output/base2new/train_base/fer2013/shots_1_8.0/KgCoOp/vit_b16_ep100_ctxv1/seed1
+RESUME: 
+SEED: 1
+TEST:
+  COMPUTE_CMAT: False
+  EVALUATOR: Classification
+  FINAL_MODEL: last_step
+  NO_TEST: False
+  PER_CLASS_RESULT: False
+  SPLIT: test
+TRAIN:
+  CHECKPOINT_FREQ: 0
+  COUNT_ITER: train_x
+  PRINT_FREQ: 5
+TRAINER:
+  CG:
+    ALPHA_D: 0.5
+    ALPHA_F: 0.5
+    EPS_D: 1.0
+    EPS_F: 1.0
+  COCOOP:
+    CTX_INIT: False
+    N_CTX: 16
+    PREC: amp
+  COOP:
+    ALPHA: 1.0
+    CLASS_TOKEN_POSITION: end
+    CSC: False
+    CTX_INIT: True
+    N_CTX: 4
+    PREC: amp
+    W: 8.0
+  DAEL:
+    CONF_THRE: 0.95
+    STRONG_TRANSFORMS: ()
+    WEIGHT_U: 0.5
+  DDAIG:
+    ALPHA: 0.5
+    CLAMP: False
+    CLAMP_MAX: 1.0
+    CLAMP_MIN: -1.0
+    G_ARCH: 
+    LMDA: 0.3
+    WARMUP: 0
+  ENTMIN:
+    LMDA: 0.001
+  FIXMATCH:
+    CONF_THRE: 0.95
+    STRONG_TRANSFORMS: ()
+    WEIGHT_U: 1.0
+  M3SDA:
+    LMDA: 0.5
+    N_STEP_F: 4
+  MCD:
+    N_STEP_F: 4
+  MEANTEA:
+    EMA_ALPHA: 0.999
+    RAMPUP: 5
+    WEIGHT_U: 1.0
+  MIXMATCH:
+    MIXUP_BETA: 0.75
+    RAMPUP: 20000
+    TEMP: 2.0
+    WEIGHT_U: 100.0
+  MME:
+    LMDA: 0.1
+  NAME: KgCoOp
+  SE:
+    CONF_THRE: 0.95
+    EMA_ALPHA: 0.999
+    RAMPUP: 300
+USE_CUDA: True
+VERBOSE: True
+VERSION: 1
+Collecting env info ...
+** System info **
+PyTorch version: 2.0.1+cu117
+Is debug build: False
+CUDA used to build PyTorch: 11.7
+ROCM used to build PyTorch: N/A
+
+OS: Ubuntu 20.04.5 LTS (x86_64)
+GCC version: (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0
+Clang version: Could not collect
+CMake version: version 3.26.4
+Libc version: glibc-2.31
+
+Python version: 3.8.16 (default, Jun 12 2023, 18:09:05)  [GCC 11.2.0] (64-bit runtime)
+Python platform: Linux-5.15.0-76-generic-x86_64-with-glibc2.17
+Is CUDA available: False
+CUDA runtime version: 12.2.91
+CUDA_MODULE_LOADING set to: N/A
+GPU models and configuration: Could not collect
+Nvidia driver version: Could not collect
+cuDNN version: Could not collect
+HIP runtime version: N/A
+MIOpen runtime version: N/A
+Is XNNPACK available: True
+
+CPU:
+Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   39 bits physical, 48 bits virtual
+CPU(s):                          4
+On-line CPU(s) list:             0-3
+Thread(s) per core:              2
+Core(s) per socket:              2
+Socket(s):                       1
+NUMA node(s):                    1
+Vendor ID:                       GenuineIntel
+CPU family:                      6
+Model:                           142
+Model name:                      Intel(R) Core(TM) i7-7500U CPU @ 2.70GHz
+Stepping:                        9
+CPU MHz:                         3200.000
+CPU max MHz:                     3500.0000
+CPU min MHz:                     400.0000
+BogoMIPS:                        5799.77
+Virtualisation:                  VT-x
+L1d cache:                       64 KiB
+L1i cache:                       64 KiB
+L2 cache:                        512 KiB
+L3 cache:                        4 MiB
+NUMA node0 CPU(s):               0-3
+Vulnerability Itlb multihit:     KVM: Mitigation: VMX disabled
+Vulnerability L1tf:              Mitigation; PTE Inversion; VMX conditional cache flushes, SMT vulnerable
+Vulnerability Mds:               Mitigation; Clear CPU buffers; SMT vulnerable
+Vulnerability Meltdown:          Mitigation; PTI
+Vulnerability Mmio stale data:   Mitigation; Clear CPU buffers; SMT vulnerable
+Vulnerability Retbleed:          Mitigation; IBRS
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:        Mitigation; IBRS, IBPB conditional, STIBP conditional, RSB filling, PBRSB-eIBRS Not affected
+Vulnerability Srbds:             Mitigation; Microcode
+Vulnerability Tsx async abort:   Not affected
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single pti ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+
+Versions of relevant libraries:
+[pip3] numpy==1.24.2
+[pip3] torch==2.0.1
+[pip3] torchvision==0.15.2
+[conda] torch                     2.0.1                    pypi_0    pypi
+[conda] torchvision               0.15.2                   pypi_0    pypi
+        Pillow (10.0.0)
+
+Loading trainer: KgCoOp
+Loading dataset: Fer2013
+['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
+Loading preprocessed few-shot data from /home/ducan/Downloads/MinhAnh/CoOp/DATA/fer2013/split_fewshot/shot_1-seed_1.pkl
+SUBSAMPLE BASE CLASSES!
+Building transform_train
++ random resized crop (size=(224, 224))
++ random flip
++ to torch tensor of range [0, 1]
++ normalization (mean=[0.48145466, 0.4578275, 0.40821073], std=[0.26862954, 0.26130258, 0.27577711])
+Building transform_test
++ resize the smaller edge to 224
++ 224x224 center crop
++ to torch tensor of range [0, 1]
++ normalization (mean=[0.48145466, 0.4578275, 0.40821073], std=[0.26862954, 0.26130258, 0.27577711])
+***** Dataset statistics *****
+  Dataset: Fer2013
+  # classes: 4
+  # train_x: 4
+  # val: 4
+  # test: 3,867
+Loading CLIP (backbone: ViT-B/16)
+Building custom CLIP
+Initial context: "a photo of a"
+Number of context words (tokens): 4
+Prompts: ['a photo of a human face with expression angry.', 'a photo of a human face with expression disgust.', 'a photo of a human face with expression fear.', 'a photo of a human face with expression happy.']
+Turning off gradients in both the image and the text encoder
+prompt_learner.ctx
+Loading evaluator: Classification
+No checkpoint found, train from scratch
+Initializing summary writer for tensorboard with log_dir=output/base2new/train_base/fer2013/shots_1_8.0/KgCoOp/vit_b16_ep100_ctxv1/seed1/tensorboard
+epoch [1/50][1/1]	time 3.249 (3.249)	data 0.322 (0.322)	eta 0:02:39	loss 1.7058 (1.7058)	acc 50.0000 (50.0000)	lr 1.000000e-05
+epoch [2/50][1/1]	time 3.007 (3.007)	data 0.301 (0.301)	eta 0:02:24	loss 1.4882 (1.4882)	acc 25.0000 (25.0000)	lr 9.980277e-06
+epoch [3/50][1/1]	time 3.038 (3.038)	data 0.318 (0.318)	eta 0:02:22	loss 1.5738 (1.5738)	acc 25.0000 (25.0000)	lr 9.921302e-06
+epoch [4/50][1/1]	time 3.081 (3.081)	data 0.331 (0.331)	eta 0:02:21	loss 1.4237 (1.4237)	acc 50.0000 (50.0000)	lr 9.823657e-06
+epoch [5/50][1/1]	time 3.117 (3.117)	data 0.346 (0.346)	eta 0:02:20	loss 1.4985 (1.4985)	acc 25.0000 (25.0000)	lr 9.688299e-06
+epoch [6/50][1/1]	time 3.087 (3.087)	data 0.306 (0.306)	eta 0:02:15	loss 1.6338 (1.6338)	acc 25.0000 (25.0000)	lr 9.516554e-06
+epoch [7/50][1/1]	time 3.146 (3.146)	data 0.305 (0.305)	eta 0:02:15	loss 2.2747 (2.2747)	acc 25.0000 (25.0000)	lr 9.310093e-06
+epoch [8/50][1/1]	time 3.150 (3.150)	data 0.300 (0.300)	eta 0:02:12	loss 1.3499 (1.3499)	acc 25.0000 (25.0000)	lr 9.070915e-06
+epoch [9/50][1/1]	time 3.181 (3.181)	data 0.288 (0.288)	eta 0:02:10	loss 1.8329 (1.8329)	acc 25.0000 (25.0000)	lr 8.801317e-06
+epoch [10/50][1/1]	time 3.994 (3.994)	data 0.436 (0.436)	eta 0:02:39	loss 1.2918 (1.2918)	acc 50.0000 (50.0000)	lr 8.503864e-06
+epoch [11/50][1/1]	time 3.227 (3.227)	data 0.267 (0.267)	eta 0:02:05	loss 1.3590 (1.3590)	acc 50.0000 (50.0000)	lr 8.181356e-06
+epoch [12/50][1/1]	time 3.164 (3.164)	data 0.315 (0.315)	eta 0:02:00	loss 0.8923 (0.8923)	acc 50.0000 (50.0000)	lr 7.836793e-06
+epoch [13/50][1/1]	time 3.466 (3.466)	data 0.391 (0.391)	eta 0:02:08	loss 1.2416 (1.2416)	acc 25.0000 (25.0000)	lr 7.473331e-06
+epoch [14/50][1/1]	time 3.096 (3.096)	data 0.286 (0.286)	eta 0:01:51	loss 2.5355 (2.5355)	acc 0.0000 (0.0000)	lr 7.094247e-06
+epoch [15/50][1/1]	time 2.992 (2.992)	data 0.301 (0.301)	eta 0:01:44	loss 0.8599 (0.8599)	acc 25.0000 (25.0000)	lr 6.702893e-06
+epoch [16/50][1/1]	time 3.014 (3.014)	data 0.300 (0.300)	eta 0:01:42	loss 0.9209 (0.9209)	acc 50.0000 (50.0000)	lr 6.302655e-06
+epoch [17/50][1/1]	time 2.972 (2.972)	data 0.301 (0.301)	eta 0:01:38	loss 1.1363 (1.1363)	acc 50.0000 (50.0000)	lr 5.896910e-06
+epoch [18/50][1/1]	time 3.212 (3.212)	data 0.332 (0.332)	eta 0:01:42	loss 0.9680 (0.9680)	acc 50.0000 (50.0000)	lr 5.488985e-06
+epoch [19/50][1/1]	time 3.120 (3.120)	data 0.245 (0.245)	eta 0:01:36	loss 1.1719 (1.1719)	acc 25.0000 (25.0000)	lr 5.082116e-06
+epoch [20/50][1/1]	time 3.297 (3.297)	data 0.320 (0.320)	eta 0:01:38	loss 1.7815 (1.7815)	acc 0.0000 (0.0000)	lr 4.679412e-06
+epoch [21/50][1/1]	time 3.359 (3.359)	data 0.251 (0.251)	eta 0:01:37	loss 1.2939 (1.2939)	acc 50.0000 (50.0000)	lr 4.283814e-06
+epoch [22/50][1/1]	time 3.591 (3.591)	data 0.353 (0.353)	eta 0:01:40	loss 1.0838 (1.0838)	acc 50.0000 (50.0000)	lr 3.898066e-06
+epoch [23/50][1/1]	time 3.331 (3.331)	data 0.295 (0.295)	eta 0:01:29	loss 1.2698 (1.2698)	acc 25.0000 (25.0000)	lr 3.524686e-06
+epoch [24/50][1/1]	time 3.126 (3.126)	data 0.273 (0.273)	eta 0:01:21	loss 1.8515 (1.8515)	acc 0.0000 (0.0000)	lr 3.165937e-06
+epoch [25/50][1/1]	time 3.192 (3.192)	data 0.300 (0.300)	eta 0:01:19	loss 0.9938 (0.9938)	acc 50.0000 (50.0000)	lr 2.823809e-06
+epoch [26/50][1/1]	time 3.199 (3.199)	data 0.280 (0.280)	eta 0:01:16	loss 1.2483 (1.2483)	acc 25.0000 (25.0000)	lr 2.500000e-06
+epoch [27/50][1/1]	time 3.160 (3.160)	data 0.308 (0.308)	eta 0:01:12	loss 1.5650 (1.5650)	acc 0.0000 (0.0000)	lr 2.195904e-06
+epoch [28/50][1/1]	time 3.184 (3.184)	data 0.313 (0.313)	eta 0:01:10	loss 1.3261 (1.3261)	acc 25.0000 (25.0000)	lr 1.912605e-06
+epoch [29/50][1/1]	time 3.293 (3.293)	data 0.335 (0.335)	eta 0:01:09	loss 1.3778 (1.3778)	acc 25.0000 (25.0000)	lr 1.650873e-06
+epoch [30/50][1/1]	time 3.143 (3.143)	data 0.282 (0.282)	eta 0:01:02	loss 1.8731 (1.8731)	acc 0.0000 (0.0000)	lr 1.411167e-06
+epoch [31/50][1/1]	time 2.982 (2.982)	data 0.279 (0.279)	eta 0:00:56	loss 1.1672 (1.1672)	acc 50.0000 (50.0000)	lr 1.193644e-06
+epoch [32/50][1/1]	time 3.377 (3.377)	data 0.287 (0.287)	eta 0:01:00	loss 1.8079 (1.8079)	acc 0.0000 (0.0000)	lr 9.981665e-07
+epoch [33/50][1/1]	time 3.441 (3.441)	data 0.294 (0.294)	eta 0:00:58	loss 1.4699 (1.4699)	acc 25.0000 (25.0000)	lr 8.243236e-07
+epoch [34/50][1/1]	time 3.145 (3.145)	data 0.307 (0.307)	eta 0:00:50	loss 1.5446 (1.5446)	acc 25.0000 (25.0000)	lr 6.714481e-07
+epoch [35/50][1/1]	time 3.109 (3.109)	data 0.314 (0.314)	eta 0:00:46	loss 1.8498 (1.8498)	acc 25.0000 (25.0000)	lr 5.386419e-07
+epoch [36/50][1/1]	time 3.062 (3.062)	data 0.332 (0.332)	eta 0:00:42	loss 1.3246 (1.3246)	acc 50.0000 (50.0000)	lr 4.248025e-07
+epoch [37/50][1/1]	time 3.094 (3.094)	data 0.321 (0.321)	eta 0:00:40	loss 1.3419 (1.3419)	acc 0.0000 (0.0000)	lr 3.286534e-07
+epoch [38/50][1/1]	time 3.087 (3.087)	data 0.270 (0.270)	eta 0:00:37	loss 0.7590 (0.7590)	acc 75.0000 (75.0000)	lr 2.487763e-07
+epoch [39/50][1/1]	time 3.110 (3.110)	data 0.323 (0.323)	eta 0:00:34	loss 1.1339 (1.1339)	acc 50.0000 (50.0000)	lr 1.836450e-07
+epoch [40/50][1/1]	time 3.116 (3.116)	data 0.291 (0.291)	eta 0:00:31	loss 1.1544 (1.1544)	acc 25.0000 (25.0000)	lr 1.316604e-07
+epoch [41/50][1/1]	time 3.367 (3.367)	data 0.260 (0.260)	eta 0:00:30	loss 1.9263 (1.9263)	acc 0.0000 (0.0000)	lr 9.118627e-08
+epoch [42/50][1/1]	time 3.293 (3.293)	data 0.389 (0.389)	eta 0:00:26	loss 1.3895 (1.3895)	acc 25.0000 (25.0000)	lr 6.058449e-08
+epoch [43/50][1/1]	time 3.159 (3.159)	data 0.305 (0.305)	eta 0:00:22	loss 0.7752 (0.7752)	acc 50.0000 (50.0000)	lr 3.825009e-08
+epoch [44/50][1/1]	time 3.113 (3.113)	data 0.309 (0.309)	eta 0:00:18	loss 1.3978 (1.3978)	acc 25.0000 (25.0000)	lr 2.264472e-08
+epoch [45/50][1/1]	time 3.100 (3.100)	data 0.281 (0.281)	eta 0:00:15	loss 0.9678 (0.9678)	acc 75.0000 (75.0000)	lr 1.232835e-08
+epoch [46/50][1/1]	time 3.145 (3.145)	data 0.276 (0.276)	eta 0:00:12	loss 1.1357 (1.1357)	acc 25.0000 (25.0000)	lr 5.988661e-09
+epoch [47/50][1/1]	time 3.062 (3.062)	data 0.257 (0.257)	eta 0:00:09	loss 1.8153 (1.8153)	acc 25.0000 (25.0000)	lr 2.467544e-09
+epoch [48/50][1/1]	time 3.116 (3.116)	data 0.366 (0.366)	eta 0:00:06	loss 1.3955 (1.3955)	acc 50.0000 (50.0000)	lr 7.843537e-10
+epoch [49/50][1/1]	time 3.182 (3.182)	data 0.318 (0.318)	eta 0:00:03	loss 1.5443 (1.5443)	acc 25.0000 (25.0000)	lr 1.554448e-10
+epoch [50/50][1/1]	time 3.165 (3.165)	data 0.303 (0.303)	eta 0:00:00	loss 1.9331 (1.9331)	acc 0.0000 (0.0000)	lr 9.734502e-12
+Checkpoint saved to "output/base2new/train_base/fer2013/shots_1_8.0/KgCoOp/vit_b16_ep100_ctxv1/seed1/prompt_learner/model.pth.tar-50"
+Finished training
+Do evaluation on test set
+=> result
+* total: 3,867
+* correct: 2,552
+* accuracy: 65.99%
+* error: 34.01%
+* macro_f1: 45.22%
+Elapsed: 0:40:38
