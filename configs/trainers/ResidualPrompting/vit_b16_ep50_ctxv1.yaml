@@ -29,5 +29,5 @@ MODEL:
     NAME: "ViT-B/16"
 
 TRAINER:
-  COOP:
+  ResidualPrompting:
     CTX_INIT: "a photo of a"
