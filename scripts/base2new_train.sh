@@ -16,20 +16,21 @@ CTP=end  # class token position (end or middle)
 NCTX=4  # number of context tokens
 SHOTS=16  # number of shots (1, 2, 4, 8, 16)
 CSC=False  # class-specific context (False or True)
-N=4  # number of proxy
+MLP=MLP1
+RESIDUAL=True
 
-for SEED in 2
+for SEED in 1 2
 do
-    DIR=output/base2new/train_base/${DATASET}/shots_${SHOTS}_${WEIGHT}/${TRAINER}/${CFG}/seed${SEED}
+    DIR=/home/svosve/Music/ma/ResPro/output/base2new/train_base/${DATASET}/shots_${SHOTS}_${WEIGHT}/${TRAINER}_${MLP}_${RESIDUAL}/${CFG}/seed${SEED}
     if [ -d "$DIR" ]; then
         echo "Results are available in ${DIR}. Skip this job"
     #     echo "Run this job and save the output to ${DIR}"
-    #     python train.py \
+    #     python /home/svosve/Music/ma/ResPro/train.py \
     #     --root ${DATA} \
     #     --seed ${SEED} \
     #     --trainer ${TRAINER} \
-    #     --dataset-config-file configs/datasets/${DATASET}.yaml \
-    #     --config-file configs/trainers/${TRAINER}/${CFG}.yaml \
+    #     --dataset-config-file /home/svosve/Music/ma/ResPro/configs/datasets/${DATASET}.yaml \
+    #     --config-file /home/svosve/Music/ma/ResPro/configs/trainers/${TRAINER}/${CFG}.yaml \
     #     --output-dir ${DIR} \
     #     TRAINER.COOP.N_CTX ${NCTX} \
     #     TRAINER.COOP.CSC ${CSC} \
@@ -39,17 +40,19 @@ do
     #     DATASET.SUBSAMPLE_CLASSES base
     else
         echo "Run this job and save the output to ${DIR}"
-        python train.py \
+        python /home/svosve/Music/ma/ResPro/train.py \
         --root ${DATA} \
         --seed ${SEED} \
         --trainer ${TRAINER} \
-        --dataset-config-file configs/datasets/${DATASET}.yaml \
-        --config-file configs/trainers/${TRAINER}/${CFG}.yaml \
+        --dataset-config-file /home/svosve/Music/ma/ResPro/configs/datasets/${DATASET}.yaml \
+        --config-file /home/svosve/Music/ma/ResPro/configs/trainers/${TRAINER}/${CFG}.yaml \
         --output-dir ${DIR} \
         TRAINER.COOP.N_CTX ${NCTX} \
         TRAINER.COOP.CSC ${CSC} \
         TRAINER.COOP.W ${WEIGHT} \
         TRAINER.COOP.CLASS_TOKEN_POSITION ${CTP} \
+        TRAINER.ResidualPrompting.MLP ${MLP} \
+        TRAINER.ResidualPrompting.RESIDUAL ${RESIDUAL} \
         DATASET.NUM_SHOTS ${SHOTS} \
         DATASET.SUBSAMPLE_CLASSES base
     fi
@@ -59,23 +62,23 @@ done
 LOADEP=50
 SUB=new
 
-for SEED in 2
+for SEED in 1 2
 do
-    COMMON_DIR=${DATASET}/shots_${SHOTS}_${WEIGHT}/${TRAINER}/${CFG}/seed${SEED}
-    MODEL_DIR=output/base2new/train_base/${COMMON_DIR}
-    DIR=output/base2new/test_${SUB}/${COMMON_DIR}
+    COMMON_DIR=${DATASET}/shots_${SHOTS}_${WEIGHT}/${TRAINER}_${MLP}_${RESIDUAL}/${CFG}/seed${SEED}
+    MODEL_DIR=/home/svosve/Music/ma/ResPro/output/base2new/train_base/${COMMON_DIR}
+    DIR=/home/svosve/Music/ma/ResPro/output/base2new/test_${SUB}/${COMMON_DIR}
 
 
     if [ -d "$DIR" ]; then
         echo "Results are available in ${DIR}. Skip this job"
     else
         echo "Run this job and save the output to ${DIR}"
-        python train.py \
+        python /home/svosve/Music/ma/ResPro/train.py \
         --root ${DATA} \
         --seed ${SEED} \
         --trainer ${TRAINER} \
-        --dataset-config-file configs/datasets/${DATASET}.yaml \
-        --config-file configs/trainers/${TRAINER}/${CFG}.yaml \
+        --dataset-config-file /home/svosve/Music/ma/ResPro/configs/datasets/${DATASET}.yaml \
+        --config-file /home/svosve/Music/ma/ResPro/configs/trainers/${TRAINER}/${CFG}.yaml \
         --output-dir ${DIR} \
         --model-dir ${MODEL_DIR} \
         --load-epoch ${LOADEP} \
@@ -83,6 +86,8 @@ do
         TRAINER.COOP.N_CTX ${NCTX} \
         TRAINER.COOP.CSC ${CSC} \
         TRAINER.COOP.CLASS_TOKEN_POSITION ${CTP} \
+        TRAINER.ResidualPrompting.MLP ${MLP} \
+        TRAINER.ResidualPrompting.RESIDUAL ${RESIDUAL} \
         DATASET.NUM_SHOTS ${SHOTS} \
         DATASET.SUBSAMPLE_CLASSES ${SUB}
     fi

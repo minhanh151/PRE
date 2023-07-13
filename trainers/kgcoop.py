@@ -87,6 +87,7 @@ class PromptLearner(nn.Module):
         super().__init__()
         n_cls = len(classnames)
         n_ctx = cfg.TRAINER.COOP.N_CTX
+        print(n_ctx)
         ctx_init = cfg.TRAINER.COOP.CTX_INIT
         dtype = clip_model.dtype
         ctx_dim = clip_model.ln_final.weight.shape[0]
@@ -133,14 +134,14 @@ class PromptLearner(nn.Module):
 
         #print(f"Loading CLIP (backbone: {cfg.MODEL.BACKBONE.NAME})")
         clip_model_ = load_clip_to_cpu(cfg)
-        # clip_model_.cuda()
+        clip_model_.cuda()
         
         #prompts_ = [prompt_prefix + " " + name + "." for name in classnames]        
         temp = CUSTOM_TEMPLATES[cfg.DATASET.NAME]
         prompts_ = [temp.format(c.replace("_", " ")) for c in classnames]
         print(f"Prompts: {prompts_}")
         prompts_ = torch.cat([clip.tokenize(p) for p in prompts_])
-        # prompts_ = prompts_.cuda()
+        prompts_ = prompts_.cuda()
 
         with torch.no_grad():
             text_features = clip_model_.encode_text(prompts_)
@@ -234,12 +235,14 @@ class CustomCLIP(nn.Module):
 
         image_features = image_features / image_features.norm(dim=-1, keepdim=True)
         text_features = text_features / text_features.norm(dim=-1, keepdim=True)
+        text_features = text_features.cuda()
         logit_scale = self.logit_scale.exp()
 
         logits = logit_scale * image_features @ text_features.t()
 
         cos = torch.nn.CosineSimilarity(dim=1,eps=1e-07)
         text_features_old = text_features_old / text_features_old.norm(dim=-1, keepdim=True)
+        text_features_old = text_features_old.cuda()
         score = cos(text_features,text_features_old)
         score = 1.0-torch.mean(score)
 

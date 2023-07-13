@@ -122,6 +122,8 @@ def extend_cfg(cfg):
     cfg.TRAINER.ResidualPrompting.CTX_INIT = ""  # initialization words
     cfg.TRAINER.ResidualPrompting.PREC = "amp"  # fp16, fp32, amp
     cfg.TRAINER.ResidualPrompting.CLASS_TOKEN_POSITION = "end"  # 'middle' or 'end' or 'front'
+    cfg.TRAINER.ResidualPrompting.MLP = "MLP1"
+    cfg.TRAINER.ResidualPrompting.RESIDUAL = True
 
     cfg.DATASET.SUBSAMPLE_CLASSES = "all"  # all, base or new
     """

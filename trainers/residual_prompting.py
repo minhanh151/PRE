@@ -50,6 +50,7 @@ class ResMLP(torch.nn.Module):
         super().__init__()
         assert module_type in ['MLP1', 'MLP2', 'transformer', 'LSTM', 'LSTM1', 'LSTM2']
         assert nonlinearity in ['relu', 'tanh', 'sigm']
+        print(module_type)
 
         self.module_type = module_type
 
@@ -87,13 +88,15 @@ class ResMLP(torch.nn.Module):
 
 
         elif module_type=='transformer':
-            device = 'cpu'
-            self.encoder_layer = nn.TransformerEncoderLayer(d_model=emb_dimension, nhead=2, dropout=0.05).to(device)
-            self.module = nn.TransformerEncoder(self.encoder_layer, num_layers=2).to(device)
+            # device = 'cpu'
+            self.encoder_layer = nn.TransformerEncoderLayer(d_model=emb_dimension, nhead=2, dropout=0.05).cuda()
+            self.module = nn.TransformerEncoder(self.encoder_layer, num_layers=2).cuda()
 
         self.residual = residual
         if self.residual:
             print('Using skip connection in MLP')
+        else:
+            print('Not Using skip connection in MLP')
 
     def forward(self, inputs):
         if self.module_type=='LSTM':
@@ -231,15 +234,18 @@ class TextEncoder(nn.Module):
 class PromptLearner(nn.Module):
     def __init__(self, cfg, classnames, clip_model, 
                  bottleneck_size=64, # bottleneck size in case of using MLP reparametrization
-                 mlp_dropout=0.0,
-                 prefix_MLP='MLP1',
-                 layer_norm=False,
-                 residual=True
+                 mlp_dropout=0,
+                 layer_norm=False
                  ):
         super().__init__()
         n_cls = len(classnames)
         n_ctx = cfg.TRAINER.ResidualPrompting.N_CTX
         ctx_init = cfg.TRAINER.ResidualPrompting.CTX_INIT
+        prefix_MLP = cfg.TRAINER.ResidualPrompting.MLP
+        residual = cfg.TRAINER.ResidualPrompting.RESIDUAL
+        print(n_ctx)
+        print(prefix_MLP)
+        print(residual)
         dtype = clip_model.dtype
         ctx_dim = clip_model.ln_final.weight.shape[0]
         clip_imsize = clip_model.visual.input_resolution
