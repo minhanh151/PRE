@@ -124,7 +124,8 @@ def extend_cfg(cfg):
     cfg.TRAINER.ResidualPrompting.CLASS_TOKEN_POSITION = "end"  # 'middle' or 'end' or 'front'
     cfg.TRAINER.ResidualPrompting.MLP = "MLP1"
     cfg.TRAINER.ResidualPrompting.RESIDUAL = True
-
+    cfg.TRAINER.ResidualPrompting.SEPARATE = True
+    
     cfg.DATASET.SUBSAMPLE_CLASSES = "all"  # all, base or new
     """
     Add new config

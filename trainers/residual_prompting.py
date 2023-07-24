@@ -37,6 +37,7 @@ class ResMLP(torch.nn.Module):
                  layer_norm=True,
                  dropout=0.0,
                  residual=True,
+                 separate_mlps=False,
                  ):
         """MLP class for soft prompt re-parameterization. MLP can have a Residual connection.
         Args:
@@ -49,7 +50,7 @@ class ResMLP(torch.nn.Module):
         """
         super().__init__()
         assert module_type in ['MLP1', 'MLP2', 'transformer', 'LSTM', 'LSTM1', 'LSTM2']
-        assert nonlinearity in ['relu', 'tanh', 'sigm']
+        assert nonlinearity in ['relu', 'tanh', 'sigm', 'gelu']
         print(module_type)
 
         self.module_type = module_type
@@ -63,6 +64,8 @@ class ResMLP(torch.nn.Module):
                 layers.append(nn.Tanh())
             elif nonlinearity=='sigm':
                 layers.append(nn.Sigmoid())
+            elif nonlinearity=='gelu':
+                layers.append(nn.GELU())
 
             layers.append(nn.Linear(bottleneck_size, emb_dimension))
 
@@ -73,6 +76,7 @@ class ResMLP(torch.nn.Module):
 
             if module_type=='MLP2':
                 layers = layers + layers # repeat twice
+            # self.module = torch.nn.Sequential(*layers).cuda()
             self.module = torch.nn.Sequential(*layers)
 
         elif module_type in ['LSTM1', 'LSTM2', 'LSTM']:
@@ -89,9 +93,12 @@ class ResMLP(torch.nn.Module):
 
         elif module_type=='transformer':
             # device = 'cpu'
+            # self.encoder_layer = nn.TransformerEncoderLayer(d_model=emb_dimension, nhead=2, dropout=0.05).cuda()
+            # self.module = nn.TransformerEncoder(self.encoder_layer, num_layers=2).cuda()
             self.encoder_layer = nn.TransformerEncoderLayer(d_model=emb_dimension, nhead=2, dropout=0.05).cuda()
             self.module = nn.TransformerEncoder(self.encoder_layer, num_layers=2).cuda()
-
+            
+        self.separate_mlps = separate_mlps
         self.residual = residual
         if self.residual:
             print('Using skip connection in MLP')
@@ -102,7 +109,10 @@ class ResMLP(torch.nn.Module):
         if self.module_type=='LSTM':
             output_embeds = self.mlp_head(self.lstm_head(inputs)[0]).squeeze()
         elif self.module_type in ['LSTM1', 'LSTM2']:
-            output_embeds = self.lstm_head(inputs)[0].squeeze()
+            if self.separate_mlps:
+                output_embeds = self.lstm_head(inputs)[0].clone()
+            else:
+                output_embeds = self.lstm_head(inputs)[0].clone().squeeze()
             if self.residual:
                 output_embeds += inputs
             return output_embeds
@@ -111,45 +121,6 @@ class ResMLP(torch.nn.Module):
             return self.module(inputs) + inputs
         else:
             return self.module(inputs)
-
-# Create MLP for prompt tuning
-def get_MLP(self, prefix_MLP, bottleneck_size, layer_norm, mlp_dropout, separate_mlps=False):
-    if prefix_MLP == 'None':
-        self.prefix_MLP = None
-    else:
-        print('Using MLP reparametrization with bottleneck = ', bottleneck_size)
-        N = self.model.encoder.embed_tokens.weight.shape[1]
-
-        if separate_mlps: # separate MLP for each prompt token
-            print('Creating a dictionary of MLPs')
-            m = self.prefix_len
-            self.prefix_MLP = {}
-            for i in range(m):
-                self.prefix_MLP[i] = ResMLP(bottleneck_size=bottleneck_size,
-                                        module_type=prefix_MLP,
-                                        dropout=mlp_dropout,
-                                        emb_dimension=N,
-                                        nonlinearity='relu', # activation function
-                                        layer_norm=layer_norm,
-                                        #residual=True
-                                        residual=self.residual,
-                                        )
-            for i in list(self.prefix_MLP):
-                self.prefix_MLP[i].to(self.device)
-
-        else: # 1 shared MLP
-            self.prefix_MLP = ResMLP(bottleneck_size=bottleneck_size,
-                                        module_type=prefix_MLP,
-                                        dropout=mlp_dropout,
-                                        emb_dimension=N,
-                                        nonlinearity='relu', # activation function
-                                        layer_norm=layer_norm,
-                                        #residual=True
-                                        residual=self.residual,
-                                        )
-            self.prefix_MLP.to(self.device)
-    #if self.prefix_MLP!=None:
-    #    self.prefix_MLP.to(self.device)
 
 
 # Initialize new task prompt from random vocab. tokens
@@ -175,17 +146,6 @@ def init_new_prompt(self, prompt_len, random_init=False):
     else: # initializing from existing path
         prompt_weigths = np.load(self.prefix_path)
     return prompt_weigths
-
-# passing each prompt token through a separate MLP
-def pass_separate_mlps(self):
-    x = self.model.prompt
-    out = []
-    for i in range(self.prefix_len):
-        h = self.prefix_MLP[i](x[i:i+1])
-        out.append(h)
-    out = torch.concat(out)
-    return out
-
 
 
 
@@ -243,9 +203,7 @@ class PromptLearner(nn.Module):
         ctx_init = cfg.TRAINER.ResidualPrompting.CTX_INIT
         prefix_MLP = cfg.TRAINER.ResidualPrompting.MLP
         residual = cfg.TRAINER.ResidualPrompting.RESIDUAL
-        print(n_ctx)
-        print(prefix_MLP)
-        print(residual)
+        separate_mlps = cfg.TRAINER.ResidualPrompting.SEPARATE
         dtype = clip_model.dtype
         ctx_dim = clip_model.ln_final.weight.shape[0]
         clip_imsize = clip_model.visual.input_resolution
@@ -278,14 +236,33 @@ class PromptLearner(nn.Module):
 
         self.ctx = nn.Parameter(ctx_vectors)  # to be optimized
 
-        self.prefix_MLP = ResMLP(bottleneck_size=bottleneck_size,
-                                         module_type=prefix_MLP,
-                                         dropout=mlp_dropout,
-                                         emb_dimension=ctx_dim,
-                                         nonlinearity='relu', # activation function
-                                         layer_norm=layer_norm,
-                                         residual=residual,
-                                         )
+        if separate_mlps: # separate MLP for each prompt token
+            print('Creating a dictionary of MLPs')
+            self.prefix_MLP = {}
+            for i in range(n_ctx):
+                self.prefix_MLP[i] = ResMLP(bottleneck_size=bottleneck_size,
+                                        module_type=prefix_MLP,
+                                        dropout=mlp_dropout,
+                                        emb_dimension=ctx_dim,
+                                        nonlinearity='relu', # activation function
+                                        layer_norm=layer_norm,
+                                        residual=residual,
+                                        separate_mlps=separate_mlps,
+                                        )
+            for i in list(self.prefix_MLP):
+                self.prefix_MLP[i].cuda()
+
+        else: # 1 shared MLP
+            self.prefix_MLP = ResMLP(bottleneck_size=bottleneck_size,
+                                            module_type=prefix_MLP,
+                                            dropout=mlp_dropout,
+                                            emb_dimension=ctx_dim,
+                                            nonlinearity='relu', # activation function
+                                            layer_norm=layer_norm,
+                                            residual=residual,
+                                            separate_mlps=separate_mlps,
+                                            )
+            # self.prefix_MLP.cuda()
 
         classnames = [name.replace("_", " ") for name in classnames]
         name_lens = [len(_tokenizer.encode(name)) for name in classnames]
@@ -303,13 +280,30 @@ class PromptLearner(nn.Module):
 
         self.n_cls = n_cls
         self.n_ctx = n_ctx
+        self.separate_mlps = separate_mlps
         self.tokenized_prompts = tokenized_prompts  # torch.Tensor
         self.name_lens = name_lens
         self.class_token_position = cfg.TRAINER.ResidualPrompting.CLASS_TOKEN_POSITION
 
+    # passing each prompt token through a separate MLP
+    def pass_separate_mlps(self):
+        x = self.ctx
+        out = []
+        for i in range(self.n_ctx):
+            # self.prefix_MLP[i] = self.prefix_MLP[i].cuda()
+            self.prefix_MLP[i] = self.prefix_MLP[i]
+            h = self.prefix_MLP[i](x[i:i+1])
+            out.append(h)
+        out = torch.concat(out)
+        return out
+
     def forward(self):
         # ctx = self.ctx
-        ctx = self.prefix_MLP(self.ctx)
+        if self.separate_mlps:
+            ctx = self.pass_separate_mlps()
+        else:
+            ctx = self.prefix_MLP(self.ctx)
+
         if ctx.dim() == 2:
             ctx = ctx.unsqueeze(0).expand(self.n_cls, -1, -1)
 
@@ -447,12 +441,15 @@ class ResidualPrompting(TrainerX):
         device_count = torch.cuda.device_count()
         if device_count > 1:
             print(f"Multiple GPUs detected (n_gpus={device_count}), use all of them!")
-            self.model = nn.DataParallel(self.model)
+            # self.model = nn.DataParallel(self.model)
+        else:
+            print("No GPU")
 
     def forward_backward(self, batch):
         image, label = self.parse_batch_train(batch)
         
         prec = self.cfg.TRAINER.ResidualPrompting.PREC
+
         if prec == "amp":
             with autocast():
                 output = self.model(image)
@@ -463,7 +460,7 @@ class ResidualPrompting(TrainerX):
             self.scaler.update()
         else:
             output = self.model(image)
-            loss = F.cross_entropy(output, label)
+            loss = F.cross_entropy(output, label)+self.w*score
             self.model_backward_and_update(loss)
 
         loss_summary = {
