@@ -27,7 +27,7 @@ conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
 python setup.py develop
 ```
 
-After that, run `pip install -r requirements.txt` under `KgCoOp/` to install a few more packages required by [CLIP](https://github.com/openai/CLIP) (this should be done when `dassl` is activated). Then, you are ready to go.
+After that, run `pip install -r requirements.txt` under `ResPro/` to install a few more packages required by [CLIP](https://github.com/openai/CLIP) (this should be done when `dassl` is activated). Then, you are ready to go.
 
 Follow [DATASETS.md](DATASETS.md) to install the datasets.
 
@@ -39,8 +39,8 @@ You will need `base2new_train_main.sh`, `base2new_test_main.sh`, and `run.sh`. T
 Below we provide an example on how to evaluate the model on ImageNet.
 
 ```bash
-bash base2new_train.sh stanford_cars 8.0
-bash base2new_test.sh stanford_cars 8.0
+bash base2new_train.sh stanford_cars
+bash base2new_test.sh stanford_cars
 ```
 
 When the evaluation is done, you can use `parse_test_res.py` to automatically calculate the average results. For instance, after you finish the evaluation using the aforementioned commands, you would get
