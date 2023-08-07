@@ -32,7 +32,6 @@ import trainers.coop
 import trainers.cocoop
 import trainers.zsclip
 import trainers.prograd
-import trainers.kgcoop
 import trainers.plot
 import trainers.residual_prompting
 def print_args(args, cfg):
