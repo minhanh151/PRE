@@ -28,7 +28,16 @@ from copy import deepcopy
 
 _tokenizer = _Tokenizer()
 
-class ResMLP(torch.nn.Module):
+def positional_encoding(seq_len, d, n=10000):
+    P = np.zeros((seq_len, d))
+    for k in range(seq_len):
+        for i in np.arange(int(d/2)):
+            denominator = np.power(n, 2*i/d)
+            P[k, 2*i] = np.sin(k/denominator)
+            P[k, 2*i+1] = np.cos(k/denominator)
+    return P
+
+class ResNetwork(torch.nn.Module):
     def __init__(self,
                  bottleneck_size,
                  module_type='MLP1',
@@ -38,24 +47,25 @@ class ResMLP(torch.nn.Module):
                  dropout=0.0,
                  residual=True,
                  separate_mlps=False,
+                 max_length=4,
                  ):
         """MLP class for soft prompt re-parameterization. MLP can have a Residual connection.
         Args:
             bottleneck_size (int): Dimension of the MLP bottlenack.
-            module_type (str, optional): Type of MLP to be used.
-                Currently supports 1-layer and 2-layer MLPs, and simple transformer layer ('MLP1'/'MLP2'/'transformer').
+            module_type (str, optional): Type of the residual reparameterizing network to be used.
+                Currently supports 1-layer and 2-layer MLPs, 1-layer and 2-layer LTSM, and simple transformer layer ('MLP1'/'MLP2'/'LSTM1'/'LSTM2'/'transformer').
                 Defaults to 'MLP1'.
-            emb_dimension (int, optional): Dimension of T5 model embeddings. Defaults to 512 (T5-small embedding dimension).
-            residual (bool, optional): Whether to use residual connection in MLP. Defaults to True.
+            emb_dimension (int, optional): Dimension of Text Encoder in CLIP model embeddings. Defaults to 512.
+            residual (bool, optional): Whether to use residual connection in the residual reparameterizing network. Defaults to True.
         """
         super().__init__()
-        assert module_type in ['MLP1', 'MLP2', 'transformer', 'LSTM', 'LSTM1', 'LSTM2']
+        assert module_type in ['MLP1', 'MLP2', 'transformer', 'LSTM1', 'LSTM2']
         assert nonlinearity in ['relu', 'tanh', 'sigm', 'gelu']
         print(module_type)
 
         self.module_type = module_type
 
-        if module_type not in ['LSTM', 'LSTM1', 'LSTM2', 'transformer']:
+        if module_type not in ['LSTM1', 'LSTM2', 'transformer']:
             layers = [nn.Linear(emb_dimension, bottleneck_size)]
 
             if nonlinearity=='relu':
@@ -76,25 +86,18 @@ class ResMLP(torch.nn.Module):
 
             if module_type=='MLP2':
                 layers = layers + layers # repeat twice
-            # self.module = torch.nn.Sequential(*layers).cuda()
             self.module = torch.nn.Sequential(*layers)
 
-        elif module_type in ['LSTM1', 'LSTM2', 'LSTM']:
+        elif module_type in ['LSTM1', 'LSTM2']:
             self.lstm_head = torch.nn.LSTM(input_size=emb_dimension,
                                            hidden_size=emb_dimension // 2,
                                            num_layers=1 if module_type=='LSTM1' else 2,
                                            dropout=0.05,
                                            bidirectional=True,
                                            batch_first=True)
-            self.mlp_head = nn.Sequential(nn.Linear(emb_dimension, emb_dimension),
-                                          nn.ReLU(),
-                                          nn.Linear(emb_dimension, emb_dimension))
-
 
         elif module_type=='transformer':
-            # device = 'cpu'
-            # self.encoder_layer = nn.TransformerEncoderLayer(d_model=emb_dimension, nhead=2, dropout=0.05).cuda()
-            # self.module = nn.TransformerEncoder(self.encoder_layer, num_layers=2).cuda()
+            self.pos_encodings = torch.FloatTensor(positional_encoding(max_length, emb_dimension))
             self.encoder_layer = nn.TransformerEncoderLayer(d_model=emb_dimension, nhead=2, dropout=0.05).cuda()
             self.module = nn.TransformerEncoder(self.encoder_layer, num_layers=2).cuda()
             
@@ -106,9 +109,7 @@ class ResMLP(torch.nn.Module):
             print('Not Using skip connection in MLP')
 
     def forward(self, inputs):
-        if self.module_type=='LSTM':
-            output_embeds = self.mlp_head(self.lstm_head(inputs)[0]).squeeze()
-        elif self.module_type in ['LSTM1', 'LSTM2']:
+        if self.module_type in ['LSTM1', 'LSTM2']:
             if self.separate_mlps:
                 output_embeds = self.lstm_head(inputs)[0].clone()
             else:
@@ -116,6 +117,8 @@ class ResMLP(torch.nn.Module):
             if self.residual:
                 output_embeds += inputs
             return output_embeds
+        elif self.module_type=='transformer':
+            inputs = inputs + self.pos_encodings
 
         if self.residual:
             return self.module(inputs) + inputs
@@ -146,8 +149,6 @@ def init_new_prompt(self, prompt_len, random_init=False):
     else: # initializing from existing path
         prompt_weigths = np.load(self.prefix_path)
     return prompt_weigths
-
-
 
 
 def load_clip_to_cpu(cfg):
@@ -240,7 +241,7 @@ class PromptLearner(nn.Module):
             print('Creating a dictionary of MLPs')
             self.prefix_MLP = {}
             for i in range(n_ctx):
-                self.prefix_MLP[i] = ResMLP(bottleneck_size=bottleneck_size,
+                self.prefix_MLP[i] = ResNetwork(bottleneck_size=bottleneck_size,
                                         module_type=prefix_MLP,
                                         dropout=mlp_dropout,
                                         emb_dimension=ctx_dim,
@@ -253,7 +254,8 @@ class PromptLearner(nn.Module):
                 self.prefix_MLP[i].cuda()
 
         else: # 1 shared MLP
-            self.prefix_MLP = ResMLP(bottleneck_size=bottleneck_size,
+            print(len(prefix_MLP))
+            self.prefix_MLP = ResNetwork(bottleneck_size=bottleneck_size,
                                             module_type=prefix_MLP,
                                             dropout=mlp_dropout,
                                             emb_dimension=ctx_dim,
