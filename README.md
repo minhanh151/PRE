@@ -27,10 +27,12 @@ Follow [DATASETS.md](DATASETS.md) to install the datasets.
 
 ## How to Run
 
-Click a paper below to see the detailed instructions on how to run the code to reproduce the results.
+Click a paper below to see the detailed instructions on how to run the code on CoOp and CoCoOp to reproduce the results.
 
 * [Learning to Prompt for Vision-Language Models](COOP.md)
 * [Conditional Prompt Learning for Vision-Language Models](COCOOP.md)
+
+Follow [PRE.md](PRE.md) to see the detailed instructions on how to run the PRE method to reproduce the results.
 
 ## Models and Results
 
