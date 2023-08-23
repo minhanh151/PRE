@@ -1,80 +1,39 @@
-# How to Run
+# Vision-Language Prompt Learning with Reparameterization Encoder
 
-## GPU memory needed
+This repo contains the codebase of a research project focused on adapting vision-language models like [CLIP](https://arxiv.org/abs/2103.00020) to downstream datasets via *prompt learning*:
 
-All the experiments is able to run on a single graphic card. However, **if you want to get results on ImageNet, the memory on any single graphic card should be larger than 24 GB.** Around 12 GB is enough for other datasets. 
+* [PRE: Vision-Language Prompt Learning with Reparameterization Encoder], 2023.
 
+## Highlights
+We introduce Prompt Learning with Reparameterization Encoder (PRE) - a simple and efficient method that enhances the generalization ability of the learnable prompt to unseen classes while maintaining the capacity to learn Base classes. Instead of directly optimizing the prompts, PRE employs a prompt encoder to reparameterize the input prompt embeddings, enhancing the exploration of task-specific knowledge from few-shot samples. Extensive evaluation shows that PRE is an efficient method, i.e., achieves better performance within good training time.
+
+<img width="922" alt="Screenshot 2023-08-23 at 13 34 15" src="https://github.com/minhanh151/PRE/assets/55950352/2f614791-9739-4487-843e-3d2d0a7f49a6">
+
+
+| Methods | Prompts | Base | New | H | Training-time|
+|---------|---------|------|------|---|-------------|
+| CLIP | hand-crafted | 68.81 | 74.43 | 71.42 | -|    
+| CoOp | textual | 83.32 | 66.92 | 73.34 | 6ms/image|
+| ProGrad | textual | 82.96 | 70.30 | 75.58 | 22ms/image|
+| CoCoOp | textual+visual | 80.89 | 70.99 | 74.47 | 160ms/image|
+| PRE | textual | 82.14 | 71.88 | 76.27 | 6.3ms/image|
 
 ## How to Install
-This code is built on top of the toolbox [Dassl.ProGrad.pytorch](https://github.com/BeierZhu/Prompt-align/tree/main/Dassl.ProGrad.pytorch). You can prepare the environment as follows:
-
-```
-# Create a conda environment
-conda create -n dassl python=3.7
-
-# Activate the environment
-conda activate dassl
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Install torch (version >= 1.7.1) and torchvision
-# Please make sure you have installed the gpu version due to the speed.
-# For example:
-conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
-
-# Install this library (no need to re-build if the source code is modified)
-python setup.py develop
-```
-
-After that, run `pip install -r requirements.txt` under `ResPro/` to install a few more packages required by [CLIP](https://github.com/openai/CLIP) (this should be done when `dassl` is activated). Then, you are ready to go.
+This code is built on top of the awesome toolbox [Dassl.pytorch](https://github.com/KaiyangZhou/Dassl.pytorch) so you need to install the `dassl` environment first. Simply follow the instructions described [here](https://github.com/KaiyangZhou/Dassl.pytorch#installation) to install `dassl` as well as PyTorch. After that, run `pip install -r requirements.txt` under `CoOp/` to install a few more packages required by [CLIP](https://github.com/openai/CLIP) (this should be done when `dassl` is activated). Then, you are ready to go.
 
 Follow [DATASETS.md](DATASETS.md) to install the datasets.
 
+## How to Run
 
-## Generalization From Base to New Classes
+Click a paper below to see the detailed instructions on how to run the code to reproduce the results.
 
-You will need `base2new_train_main.sh`, `base2new_test_main.sh`, and `run.sh`. The scripts with the prefix `base2new_train` train a model on base classes while the ones with the prefix `base2new_test` evaluate the trained model on new classes. Both kinds of scripts have only one input argument, i.e., `DATASET`. `DATASET` takes as input a dataset name, like `imagenet` or `caltech101`. The valid names are the files' names in `CoOp/configs/datasets/`.
+* [Learning to Prompt for Vision-Language Models](COOP.md)
+* [Conditional Prompt Learning for Vision-Language Models](COCOOP.md)
 
-Below we provide an example on how to evaluate the model on ImageNet.
+## Models and Results
 
-```bash
-bash base2new_train.sh stanford_cars
-bash base2new_test.sh stanford_cars
+- The pre-trained weights of CoOp (both M=16 & M=4) on ImageNet based on RN50, RN101, ViT-B/16 and ViT-B/32 can be downloaded altogether via this [link](https://drive.google.com/file/d/18ypxfd82RR0pizc5MM1ZWDYDk4j0BtPF/view?usp=sharing). The weights can be used to reproduce the results in Table 1 of CoOp's paper (i.e., the results on ImageNet and its four variants with domain shift). To load the weights and run the evaluation code, you will need to specify `--model-dir` and `--load-epoch` (see this [script](https://github.com/KaiyangZhou/CoOp/blob/main/scripts/eval.sh) for example).
+- The raw numerical results can be found at this [google drive link](https://docs.google.com/spreadsheets/d/12_kaFdD0nct9aUIrDoreY0qDunQ9q9tv/edit?usp=sharing&ouid=100312610418109826457&rtpof=true&sd=true).
+
+
 ```
-
-When the evaluation is done, you can use `parse_test_res.py` to automatically calculate the average results. For instance, after you finish the evaluation using the aforementioned commands, you would get
-
-```
-output
-|–– base2new/
-|   |–– test_new/
-|   |   |–– stanford_cars/
-|   |   |   |–– shots_16/
-|   |   |   |   |–– CoCoOp/
-|   |   |   |   |   |–– rn50_ep100/
-|   |   |   |   |   |   |–– seed1/
-|   |   |   |   |   |   |–– seed2/
-|   |   |   |   |   |   |–– seed3/
-|   |–– train_base/
-|   |   |–– stanford_cars/
-|   |   |   |–– shots_16/
-|   |   |   |   |–– CoCoOp/
-|   |   |   |   |   |–– rn50_ep100/
-|   |   |   |   |   |   |–– seed1/
-|   |   |   |   |   |   |–– seed2/
-|   |   |   |   |   |   |–– seed3/
-```
-
-Then, to get the average performance on the base classes, run
-
-```bash
-python parse_test_res.py output/base2new/train_base/stanford_cars/shots_16/CoCoOp/rn50_ep100
-```
-
-To get the average performance on the new classes, run
-
-```bash
-python parse_test_res.py output/base2new/test_new/stanford_cars/shots_16/CoCoOp/rn50_ep100 --test-log
-```
-
