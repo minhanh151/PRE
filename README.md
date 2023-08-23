@@ -9,6 +9,8 @@ We introduce Prompt Learning with Reparameterization Encoder (PRE) - a simple an
 
 <img width="922" alt="Screenshot 2023-08-23 at 13 34 15" src="https://github.com/minhanh151/PRE/assets/55950352/2f614791-9739-4487-843e-3d2d0a7f49a6">
 
+</br>
+</br>
 
 | Methods | Prompts | Base | New | H | Training-time|
 |---------|---------|------|------|---|-------------|
