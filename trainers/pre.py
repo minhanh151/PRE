@@ -37,35 +37,40 @@ def positional_encoding(seq_len, d, n=10000):
             P[k, 2*i+1] = np.cos(k/denominator)
     return P
 
-class ResNetwork(torch.nn.Module):
+class PromptEncoder(torch.nn.Module):
     def __init__(self,
-                 bottleneck_size,
-                 module_type='MLP1',
+                 module_type='LSTM1',
                  emb_dimension=512,
+                 bottleneck_size=64,
                  nonlinearity='relu', # activation function
                  layer_norm=True,
                  dropout=0.0,
                  residual=True,
-                 separate_mlps=False,
-                 max_length=4,
+                 separate_network=False,
                  ):
-        """MLP class for soft prompt re-parameterization. MLP can have a Residual connection.
+        """ Soft prompt re-parameterization encoder to process prompt embeddings. Prompt Encoder can have a Residual connection.
         Args:
-            bottleneck_size (int): Dimension of the MLP bottlenack.
-            module_type (str, optional): Type of the residual reparameterizing network to be used.
-                Currently supports 1-layer and 2-layer MLPs, 1-layer and 2-layer LTSM, and simple transformer layer ('MLP1'/'MLP2'/'LSTM1'/'LSTM2'/'transformer').
-                Defaults to 'MLP1'.
-            emb_dimension (int, optional): Dimension of Text Encoder in CLIP model embeddings. Defaults to 512.
-            residual (bool, optional): Whether to use residual connection in the residual reparameterizing network. Defaults to True.
+            module_type (str, optional): Type of network to be used.
+                Currently supports 1-layer and 2-layerLSTM and MLPs, and simple transformer encoders.
+                Defaults to 'LSTM1'.
+            emb_dimension (int, optional): Dimension of CLIP model embeddings. Defaults to 512.
+            bottleneck_size (int): Dimension of the MLP bottleneck.
+            residual (bool, optional): Whether to use residual connection in Prompt Encoder. Defaults to True.
         """
         super().__init__()
-        assert module_type in ['MLP1', 'MLP2', 'transformer', 'LSTM1', 'LSTM2']
-        assert nonlinearity in ['relu', 'tanh', 'sigm', 'gelu']
-        print(module_type)
-
+        assert module_type in ['LSTM1', 'LSTM2', 'MLP1', 'MLP2', 'transformer']
+        assert nonlinearity in ['relu', 'tanh', 'sigm']
         self.module_type = module_type
 
-        if module_type not in ['LSTM1', 'LSTM2', 'transformer']:
+        if module_type in ['LSTM1', 'LSTM2']:
+            self.lstm_head = torch.nn.LSTM(input_size=emb_dimension,
+                                           hidden_size=emb_dimension // 2,
+                                           num_layers=1 if module_type=='LSTM1' else 2,
+                                           dropout=0.05,
+                                           bidirectional=True,
+                                           batch_first=True)
+
+        elif module_type in ['MLP1', 'MLP2']:
             layers = [nn.Linear(emb_dimension, bottleneck_size)]
 
             if nonlinearity=='relu':
@@ -74,8 +79,6 @@ class ResNetwork(torch.nn.Module):
                 layers.append(nn.Tanh())
             elif nonlinearity=='sigm':
                 layers.append(nn.Sigmoid())
-            elif nonlinearity=='gelu':
-                layers.append(nn.GELU())
 
             layers.append(nn.Linear(bottleneck_size, emb_dimension))
 
@@ -88,29 +91,21 @@ class ResNetwork(torch.nn.Module):
                 layers = layers + layers # repeat twice
             self.module = torch.nn.Sequential(*layers)
 
-        elif module_type in ['LSTM1', 'LSTM2']:
-            self.lstm_head = torch.nn.LSTM(input_size=emb_dimension,
-                                           hidden_size=emb_dimension // 2,
-                                           num_layers=1 if module_type=='LSTM1' else 2,
-                                           dropout=0.05,
-                                           bidirectional=True,
-                                           batch_first=True)
-
         elif module_type=='transformer':
             self.pos_encodings = torch.FloatTensor(positional_encoding(max_length, emb_dimension))
             self.encoder_layer = nn.TransformerEncoderLayer(d_model=emb_dimension, nhead=2, dropout=0.05).cuda()
             self.module = nn.TransformerEncoder(self.encoder_layer, num_layers=2).cuda()
             
-        self.separate_mlps = separate_mlps
+        self.separate_network = separate_network
         self.residual = residual
         if self.residual:
-            print('Using skip connection in MLP')
+            print('Using skip connection in Prompt Encoder')
         else:
-            print('Not Using skip connection in MLP')
+            print('Not Using skip connection in Prompt Encoder')
 
     def forward(self, inputs):
         if self.module_type in ['LSTM1', 'LSTM2']:
-            if self.separate_mlps:
+            if self.separate_network:
                 output_embeds = self.lstm_head(inputs)[0].clone()
             else:
                 output_embeds = self.lstm_head(inputs)[0].clone().squeeze()
@@ -195,16 +190,16 @@ class TextEncoder(nn.Module):
 class PromptLearner(nn.Module):
     def __init__(self, cfg, classnames, clip_model, 
                  bottleneck_size=64, # bottleneck size in case of using MLP reparametrization
-                 mlp_dropout=0,
+                 dropout=0,
                  layer_norm=False
                  ):
         super().__init__()
         n_cls = len(classnames)
-        n_ctx = cfg.TRAINER.ResidualPrompting.N_CTX
-        ctx_init = cfg.TRAINER.ResidualPrompting.CTX_INIT
-        prefix_MLP = cfg.TRAINER.ResidualPrompting.MLP
-        residual = cfg.TRAINER.ResidualPrompting.RESIDUAL
-        separate_mlps = cfg.TRAINER.ResidualPrompting.SEPARATE
+        n_ctx = cfg.TRAINER.PRE.N_CTX
+        ctx_init = cfg.TRAINER.PRE.CTX_INIT
+        encoder_network = cfg.TRAINER.PRE.ENCODER
+        residual = cfg.TRAINER.PRE.RESIDUAL
+        separate_network = cfg.TRAINER.PRE.SEPARATE
         dtype = clip_model.dtype
         ctx_dim = clip_model.ln_final.weight.shape[0]
         clip_imsize = clip_model.visual.input_resolution
@@ -223,7 +218,7 @@ class PromptLearner(nn.Module):
 
         else:
             # random initialization
-            if cfg.TRAINER.ResidualPrompting.CSC:
+            if cfg.TRAINER.PRE.CSC:
                 print("Initializing class-specific contexts")
                 ctx_vectors = torch.empty(n_cls, n_ctx, ctx_dim, dtype=dtype)
             else:
@@ -237,34 +232,36 @@ class PromptLearner(nn.Module):
 
         self.ctx = nn.Parameter(ctx_vectors)  # to be optimized
 
-        if separate_mlps: # separate MLP for each prompt token
-            print('Creating a dictionary of MLPs')
-            self.prefix_MLP = {}
+        if separate_network: # separate network for each prompt token in prompt encoder
+            print('Creating a dictionary of networks in prompt encoder')
+            self.encoder_network = {}
             for i in range(n_ctx):
-                self.prefix_MLP[i] = ResNetwork(bottleneck_size=bottleneck_size,
-                                        module_type=prefix_MLP,
-                                        dropout=mlp_dropout,
+                self.encoder_network[i] = PromptEncoder(
+                                        module_type=encoder_network,
+                                        bottleneck_size=bottleneck_size,
+                                        dropout=dropout,
                                         emb_dimension=ctx_dim,
                                         nonlinearity='relu', # activation function
                                         layer_norm=layer_norm,
                                         residual=residual,
-                                        separate_mlps=separate_mlps,
+                                        separate_network=separate_network,
                                         )
-            for i in list(self.prefix_MLP):
-                self.prefix_MLP[i].cuda()
+            for i in list(self.encoder_network):
+                self.encoder_network[i].cuda()
 
-        else: # 1 shared MLP
-            print(len(prefix_MLP))
-            self.prefix_MLP = ResNetwork(bottleneck_size=bottleneck_size,
-                                            module_type=prefix_MLP,
-                                            dropout=mlp_dropout,
+        else: # 1 shared network
+            print(len(encoder_network))
+            self.encoder_network = PromptEncoder(
+                                            module_type=encoder_network,
+                                            bottleneck_size=bottleneck_size,
+                                            dropout=dropout,
                                             emb_dimension=ctx_dim,
                                             nonlinearity='relu', # activation function
                                             layer_norm=layer_norm,
                                             residual=residual,
-                                            separate_mlps=separate_mlps,
+                                            separate_network=separate_network,
                                             )
-            # self.prefix_MLP.cuda()
+            # self.encoder_network.cuda()
 
         classnames = [name.replace("_", " ") for name in classnames]
         name_lens = [len(_tokenizer.encode(name)) for name in classnames]
@@ -282,29 +279,28 @@ class PromptLearner(nn.Module):
 
         self.n_cls = n_cls
         self.n_ctx = n_ctx
-        self.separate_mlps = separate_mlps
+        self.separate_network = separate_network
         self.tokenized_prompts = tokenized_prompts  # torch.Tensor
         self.name_lens = name_lens
-        self.class_token_position = cfg.TRAINER.ResidualPrompting.CLASS_TOKEN_POSITION
+        self.class_token_position = cfg.TRAINER.PRE.CLASS_TOKEN_POSITION
 
-    # passing each prompt token through a separate MLP
-    def pass_separate_mlps(self):
+    # passing each prompt token through a separate network
+    def pass_separate_network(self):
         x = self.ctx
         out = []
         for i in range(self.n_ctx):
-            # self.prefix_MLP[i] = self.prefix_MLP[i].cuda()
-            self.prefix_MLP[i] = self.prefix_MLP[i]
-            h = self.prefix_MLP[i](x[i:i+1])
+            # self.encoder_network[i] = self.encoder_network[i].cuda()
+            self.encoder_network[i] = self.encoder_network[i]
+            h = self.encoder_network[i](x[i:i+1])
             out.append(h)
         out = torch.concat(out)
         return out
 
     def forward(self):
-        # ctx = self.ctx
-        if self.separate_mlps:
-            ctx = self.pass_separate_mlps()
+        if self.separate_network:
+            ctx = self.pass_separate_network()
         else:
-            ctx = self.prefix_MLP(self.ctx)
+            ctx = self.encoder_network(self.ctx)
 
         if ctx.dim() == 2:
             ctx = ctx.unsqueeze(0).expand(self.n_cls, -1, -1)
@@ -398,15 +394,15 @@ class CustomCLIP(nn.Module):
 
 
 @TRAINER_REGISTRY.register()
-class ResidualPrompting(TrainerX):
-    """Residual Prompting).
+class PRE(TrainerX):
+    """ Vision-Language Prompt Learning with Reparameterization Encoder).
 
     Learning to Prompt for Vision-Language Models
     https://arxiv.org/abs/2109.01134
     """
 
     def check_cfg(self, cfg):
-        assert cfg.TRAINER.ResidualPrompting.PREC in ["fp16", "fp32", "amp"]
+        assert cfg.TRAINER.PRE.PREC in ["fp16", "fp32", "amp"]
 
     def build_model(self):
         cfg = self.cfg
@@ -415,7 +411,7 @@ class ResidualPrompting(TrainerX):
         print(f"Loading CLIP (backbone: {cfg.MODEL.BACKBONE.NAME})")
         clip_model = load_clip_to_cpu(cfg)
         
-        if cfg.TRAINER.ResidualPrompting.PREC == "fp32" or cfg.TRAINER.ResidualPrompting.PREC == "amp":
+        if cfg.TRAINER.PRE.PREC == "fp32" or cfg.TRAINER.PRE.PREC == "amp":
             # CLIP's default precision is fp16
             clip_model.float()
 
@@ -436,7 +432,7 @@ class ResidualPrompting(TrainerX):
         self.sched = build_lr_scheduler(self.optim, cfg.OPTIM)
         self.register_model("prompt_learner", self.model.prompt_learner, self.optim, self.sched)
 
-        self.scaler = GradScaler() if cfg.TRAINER.ResidualPrompting.PREC == "amp" else None
+        self.scaler = GradScaler() if cfg.TRAINER.PRE.PREC == "amp" else None
 
         # Note that multi-gpu training could be slow because CLIP's size is
         # big, which slows down the copy operation in DataParallel
@@ -450,7 +446,7 @@ class ResidualPrompting(TrainerX):
     def forward_backward(self, batch):
         image, label = self.parse_batch_train(batch)
         
-        prec = self.cfg.TRAINER.ResidualPrompting.PREC
+        prec = self.cfg.TRAINER.PRE.PREC
 
         if prec == "amp":
             with autocast():
@@ -515,42 +511,3 @@ class ResidualPrompting(TrainerX):
             print("Loading weights to {} " 'from "{}" (epoch = {})'.format(name, model_path, epoch))
             # set strict=False
             self._models[name].load_state_dict(state_dict, strict=False)
-
-    # Create optimizer
-    def get_optimizer(self, lr, weight_decay): # task is used for MLP
-
-        no_decay = ["bias", "LayerNorm.weight"]
-        optimizer_grouped_parameters = [
-            {
-                "params": [p for n, p in self.model.prompt_learner.named_parameters() if not any(nd in n for nd in no_decay)],
-                "weight_decay": weight_decay,
-                "lr": lr,
-            },
-
-            {
-                "params": [p for n, p in self.model.prompt_learner.named_parameters() if any(nd in n for nd in no_decay)],
-                "weight_decay": weight_decay,
-                "lr": lr,
-            },
-        ]
-
-        # if self.model.prompt_learner.prefix_MLP!=None:
-        #     weight_decay_mlp = weight_decay
-        #     mlp_lr = lr
-
-        #     # if self.separate_mlps==False: # shared MLP
-        #     #     all_mlps = [self.prefix_MLP]
-        #     # else: # separate MLP for each token
-        #     #     all_mlps = [self.prefix_MLP[i] for i in list(self.prefix_MLP)]
-        #     all_mlps = [self.model.prompt_learner.prefix_MLP]
-        #     print(all_mlps)
-
-        #     for mlp in all_mlps:
-        #         optimizer_grouped_parameters.append({
-        #             "params": [p for n, p in mlp.named_parameters()],# if not any(nd in n for nd in no_decay)],
-        #             "weight_decay": weight_decay_mlp,
-        #             "lr": mlp_lr,
-        #         })
-        # print(optimizer_grouped_parameters)
-        optimizer = torch.optim.Adam(optimizer_grouped_parameters, eps=1e-8)
-        return optimizer

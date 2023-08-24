@@ -2,21 +2,21 @@
 ** Arguments **
 ***************
 backbone: 
-config_file: /home/svosve/Music/ma/ResPro/configs/trainers/ResidualPrompting/vit_b16_ep50_ctxv1.yaml
+config_file: /home/svosve/Music/ma/ResPro/configs/trainers/PRE/vit_b16_ep50_ctxv1.yaml
 dataset_config_file: /home/svosve/Music/ma/ResPro/configs/datasets/stanford_cars.yaml
 eval_only: True
 head: 
 load_epoch: 50
-model_dir: /home/svosve/Music/ma/ResPro/output/base2new/train_base/stanford_cars/shots_16_8.0/ResidualPrompting_transformer_True/vit_b16_ep50_ctxv1/seed2
+model_dir: /home/svosve/Music/ma/ResPro/output/base2new/train_base/stanford_cars/shots_16_8.0/PRE_transformer_True/vit_b16_ep50_ctxv1/seed2
 no_train: False
-opts: ['TRAINER.COOP.N_CTX', '16', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'TRAINER.ResidualPrompting.MLP', 'transformer', 'TRAINER.ResidualPrompting.RESIDUAL', 'True', 'DATASET.NUM_SHOTS', '16', 'DATASET.SUBSAMPLE_CLASSES', 'new']
-output_dir: /home/svosve/Music/ma/ResPro/output/base2new/test_new/stanford_cars/shots_16_8.0/ResidualPrompting_transformer_True/vit_b16_ep50_ctxv1/seed2
+opts: ['TRAINER.COOP.N_CTX', '16', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'TRAINER.PRE.ENCODER', 'transformer', 'TRAINER.PRE.RESIDUAL', 'True', 'DATASET.NUM_SHOTS', '16', 'DATASET.SUBSAMPLE_CLASSES', 'new']
+output_dir: /home/svosve/Music/ma/ResPro/output/base2new/test_new/stanford_cars/shots_16_8.0/PRE_transformer_True/vit_b16_ep50_ctxv1/seed2
 resume: 
 root: /home/svosve/Music/ma/ResPro/DATA
 seed: 2
 source_domains: None
 target_domains: None
-trainer: ResidualPrompting
+trainer: PRE
 transforms: None
 ************
 ** Config **
@@ -113,7 +113,7 @@ OPTIM:
   WARMUP_RECOUNT: True
   WARMUP_TYPE: constant
   WEIGHT_DECAY: 0.0005
-OUTPUT_DIR: /home/svosve/Music/ma/ResPro/output/base2new/test_new/stanford_cars/shots_16_8.0/ResidualPrompting_transformer_True/vit_b16_ep50_ctxv1/seed2
+OUTPUT_DIR: /home/svosve/Music/ma/ResPro/output/base2new/test_new/stanford_cars/shots_16_8.0/PRE_transformer_True/vit_b16_ep50_ctxv1/seed2
 RESUME: 
 SEED: 2
 TEST:
@@ -194,7 +194,7 @@ TRAINER:
     WEIGHT_U: 100.0
   MME:
     LMDA: 0.1
-  NAME: ResidualPrompting
+  NAME: PRE
   PLOT:
     CLASS_TOKEN_POSITION: end
     CSC: False
@@ -202,7 +202,7 @@ TRAINER:
     N: 4
     N_CTX: 16
     PREC: amp
-  ResidualPrompting:
+  PRE:
     CLASS_TOKEN_POSITION: end
     CSC: False
     CTX_INIT: a photo of a
@@ -302,7 +302,7 @@ Versions of relevant libraries:
 [conda] torchvision               0.15.2                   pypi_0    pypi
         Pillow (10.0.0)
 
-Loading trainer: ResidualPrompting
+Loading trainer: PRE
 Loading dataset: StanfordCars
 Reading split from /home/svosve/Music/ma/ResPro/DATA/stanford_cars/split_zhou_StanfordCars.json
 Loading preprocessed few-shot data from /home/svosve/Music/ma/ResPro/DATA/stanford_cars/split_fewshot/shot_16-seed_2.pkl
@@ -336,7 +336,7 @@ Using skip connection in MLP
 Turning off gradients in both the image and the text encoder
 Multiple GPUs detected (n_gpus=4), use all of them!
 Loading evaluator: Classification
-Loading weights to prompt_learner from "/home/svosve/Music/ma/ResPro/output/base2new/train_base/stanford_cars/shots_16_8.0/ResidualPrompting_transformer_True/vit_b16_ep50_ctxv1/seed2/prompt_learner/model.pth.tar-50" (epoch = 50)
+Loading weights to prompt_learner from "/home/svosve/Music/ma/ResPro/output/base2new/train_base/stanford_cars/shots_16_8.0/PRE_transformer_True/vit_b16_ep50_ctxv1/seed2/prompt_learner/model.pth.tar-50" (epoch = 50)
 Evaluate on the *test* set
 => result
 * total: 4,039

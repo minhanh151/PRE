@@ -2,21 +2,21 @@
 ** Arguments **
 ***************
 backbone: 
-config_file: /home/svosve/Music/ma/ResPro/configs/trainers/ResidualPrompting/vit_b16_ep50_ctxv1.yaml
+config_file: /home/svosve/Music/ma/ResPro/configs/trainers/PRE/vit_b16_ep50_ctxv1.yaml
 dataset_config_file: /home/svosve/Music/ma/ResPro/configs/datasets/fgvc_aircraft.yaml
 eval_only: False
 head: 
 load_epoch: None
 model_dir: 
 no_train: False
-opts: ['TRAINER.COOP.N_CTX', '4', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.W', '8.0', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'TRAINER.ResidualPrompting.MLP', 'MLP1', 'TRAINER.ResidualPrompting.RESIDUAL', 'True', 'TRAINER.ResidualPrompting.SEPARATE', 'True', 'DATASET.NUM_SHOTS', '8', 'DATASET.SUBSAMPLE_CLASSES', 'base']
-output_dir: /home/svosve/Music/ma/ResPro/output/base2new/train_base/fgvc_aircraft/shots_8_8.0/ResidualPrompting_MLP1_True_True/vit_b16_ep50_ctxv1/seed1
+opts: ['TRAINER.COOP.N_CTX', '4', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.W', '8.0', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'TRAINER.PRE.ENCODER', 'MLP1', 'TRAINER.PRE.RESIDUAL', 'True', 'TRAINER.PRE.SEPARATE', 'True', 'DATASET.NUM_SHOTS', '8', 'DATASET.SUBSAMPLE_CLASSES', 'base']
+output_dir: /home/svosve/Music/ma/ResPro/output/base2new/train_base/fgvc_aircraft/shots_8_8.0/PRE_MLP1_True_True/vit_b16_ep50_ctxv1/seed1
 resume: 
 root: /home/svosve/Music/ma/ResPro/DATA
 seed: 1
 source_domains: None
 target_domains: None
-trainer: ResidualPrompting
+trainer: PRE
 transforms: None
 ************
 ** Config **
@@ -113,7 +113,7 @@ OPTIM:
   WARMUP_RECOUNT: True
   WARMUP_TYPE: constant
   WEIGHT_DECAY: 0.0005
-OUTPUT_DIR: /home/svosve/Music/ma/ResPro/output/base2new/train_base/fgvc_aircraft/shots_8_8.0/ResidualPrompting_MLP1_True_True/vit_b16_ep50_ctxv1/seed1
+OUTPUT_DIR: /home/svosve/Music/ma/ResPro/output/base2new/train_base/fgvc_aircraft/shots_8_8.0/PRE_MLP1_True_True/vit_b16_ep50_ctxv1/seed1
 RESUME: 
 SEED: 1
 TEST:
@@ -194,7 +194,7 @@ TRAINER:
     WEIGHT_U: 100.0
   MME:
     LMDA: 0.1
-  NAME: ResidualPrompting
+  NAME: PRE
   PLOT:
     CLASS_TOKEN_POSITION: end
     CSC: False
@@ -202,7 +202,7 @@ TRAINER:
     N: 4
     N_CTX: 16
     PREC: amp
-  ResidualPrompting:
+  PRE:
     CLASS_TOKEN_POSITION: end
     CSC: False
     CTX_INIT: a photo of a
@@ -303,7 +303,7 @@ Versions of relevant libraries:
 [conda] torchvision               0.15.2                   pypi_0    pypi
         Pillow (10.0.0)
 
-Loading trainer: ResidualPrompting
+Loading trainer: PRE
 Loading dataset: FGVCAircraft
 Creating a 8-shot dataset
 Creating a 4-shot dataset
@@ -343,7 +343,7 @@ Turning off gradients in both the image and the text encoder
 Multiple GPUs detected (n_gpus=4), use all of them!
 Loading evaluator: Classification
 No checkpoint found, train from scratch
-Initialize tensorboard (log_dir=/home/svosve/Music/ma/ResPro/output/base2new/train_base/fgvc_aircraft/shots_8_8.0/ResidualPrompting_MLP1_True_True/vit_b16_ep50_ctxv1/seed1/tensorboard)
+Initialize tensorboard (log_dir=/home/svosve/Music/ma/ResPro/output/base2new/train_base/fgvc_aircraft/shots_8_8.0/PRE_MLP1_True_True/vit_b16_ep50_ctxv1/seed1/tensorboard)
 epoch [1/50] batch [5/12] time 0.077 (1.047) data 0.000 (0.733) loss 3.7650 (3.6902) acc 15.6250 (8.7500) lr 1.0000e-05 eta 0:10:23
 epoch [1/50] batch [10/12] time 0.076 (0.613) data 0.000 (0.418) loss 3.4256 (3.6112) acc 6.2500 (10.0000) lr 1.0000e-05 eta 0:06:01
 epoch [2/50] batch [5/12] time 0.072 (0.230) data 0.000 (0.155) loss 2.9892 (3.2263) acc 15.6250 (16.2500) lr 2.0000e-03 eta 0:02:14
@@ -444,7 +444,7 @@ epoch [49/50] batch [5/12] time 0.083 (0.230) data 0.000 (0.144) loss 2.2058 (2.
 epoch [49/50] batch [10/12] time 0.075 (0.155) data 0.000 (0.072) loss 2.3323 (2.1267) acc 34.3750 (33.7500) lr 1.7713e-05 eta 0:00:02
 epoch [50/50] batch [5/12] time 0.075 (0.227) data 0.000 (0.144) loss 2.2378 (2.0485) acc 31.2500 (36.8750) lr 7.8853e-06 eta 0:00:01
 epoch [50/50] batch [10/12] time 0.074 (0.153) data 0.000 (0.072) loss 2.5525 (2.0663) acc 34.3750 (36.8750) lr 7.8853e-06 eta 0:00:00
-Checkpoint saved to /home/svosve/Music/ma/ResPro/output/base2new/train_base/fgvc_aircraft/shots_8_8.0/ResidualPrompting_MLP1_True_True/vit_b16_ep50_ctxv1/seed1/prompt_learner/model.pth.tar-50
+Checkpoint saved to /home/svosve/Music/ma/ResPro/output/base2new/train_base/fgvc_aircraft/shots_8_8.0/PRE_MLP1_True_True/vit_b16_ep50_ctxv1/seed1/prompt_learner/model.pth.tar-50
 Finish training
 Deploy the last-epoch model
 Evaluate on the *test* set

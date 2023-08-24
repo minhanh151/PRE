@@ -2,21 +2,21 @@
 ** Arguments **
 ***************
 backbone: 
-config_file: /home/svosve/Music/ma/ResPro/configs/trainers/ResidualPrompting/vit_b16_ep50_ctxv1.yaml
+config_file: /home/svosve/Music/ma/ResPro/configs/trainers/PRE/vit_b16_ep50_ctxv1.yaml
 dataset_config_file: /home/svosve/Music/ma/ResPro/configs/datasets/eurosat.yaml
 eval_only: False
 head: 
 load_epoch: None
 model_dir: 
 no_train: False
-opts: ['TRAINER.COOP.N_CTX', '16', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.W', '8.0', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'TRAINER.ResidualPrompting.MLP', 'transformer', 'TRAINER.ResidualPrompting.RESIDUAL', 'True', 'DATASET.NUM_SHOTS', '16', 'DATASET.SUBSAMPLE_CLASSES', 'base']
-output_dir: /home/svosve/Music/ma/ResPro/output/base2new/train_base/eurosat/shots_16_8.0/ResidualPrompting_transformer_True/vit_b16_ep50_ctxv1/seed1
+opts: ['TRAINER.COOP.N_CTX', '16', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.W', '8.0', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'TRAINER.PRE.ENCODER', 'transformer', 'TRAINER.PRE.RESIDUAL', 'True', 'DATASET.NUM_SHOTS', '16', 'DATASET.SUBSAMPLE_CLASSES', 'base']
+output_dir: /home/svosve/Music/ma/ResPro/output/base2new/train_base/eurosat/shots_16_8.0/PRE_transformer_True/vit_b16_ep50_ctxv1/seed1
 resume: 
 root: /home/svosve/Music/ma/ResPro/DATA
 seed: 1
 source_domains: None
 target_domains: None
-trainer: ResidualPrompting
+trainer: PRE
 transforms: None
 ************
 ** Config **
@@ -113,7 +113,7 @@ OPTIM:
   WARMUP_RECOUNT: True
   WARMUP_TYPE: constant
   WEIGHT_DECAY: 0.0005
-OUTPUT_DIR: /home/svosve/Music/ma/ResPro/output/base2new/train_base/eurosat/shots_16_8.0/ResidualPrompting_transformer_True/vit_b16_ep50_ctxv1/seed1
+OUTPUT_DIR: /home/svosve/Music/ma/ResPro/output/base2new/train_base/eurosat/shots_16_8.0/PRE_transformer_True/vit_b16_ep50_ctxv1/seed1
 RESUME: 
 SEED: 1
 TEST:
@@ -194,7 +194,7 @@ TRAINER:
     WEIGHT_U: 100.0
   MME:
     LMDA: 0.1
-  NAME: ResidualPrompting
+  NAME: PRE
   PLOT:
     CLASS_TOKEN_POSITION: end
     CSC: False
@@ -202,7 +202,7 @@ TRAINER:
     N: 4
     N_CTX: 16
     PREC: amp
-  ResidualPrompting:
+  PRE:
     CLASS_TOKEN_POSITION: end
     CSC: False
     CTX_INIT: 
@@ -302,7 +302,7 @@ Versions of relevant libraries:
 [conda] torchvision               0.15.2                   pypi_0    pypi
         Pillow (10.0.0)
 
-Loading trainer: ResidualPrompting
+Loading trainer: PRE
 Loading dataset: EuroSAT
 Reading split from /home/svosve/Music/ma/ResPro/DATA/eurosat/split_zhou_EuroSAT.json
 Loading preprocessed few-shot data from /home/svosve/Music/ma/ResPro/DATA/eurosat/split_fewshot/shot_16-seed_1.pkl
@@ -338,7 +338,7 @@ Turning off gradients in both the image and the text encoder
 Multiple GPUs detected (n_gpus=4), use all of them!
 Loading evaluator: Classification
 No checkpoint found, train from scratch
-Initialize tensorboard (log_dir=/home/svosve/Music/ma/ResPro/output/base2new/train_base/eurosat/shots_16_8.0/ResidualPrompting_transformer_True/vit_b16_ep50_ctxv1/seed1/tensorboard)
+Initialize tensorboard (log_dir=/home/svosve/Music/ma/ResPro/output/base2new/train_base/eurosat/shots_16_8.0/PRE_transformer_True/vit_b16_ep50_ctxv1/seed1/tensorboard)
 epoch [1/50] batch [1/2] time 5.201 (5.201) data 0.353 (0.353) loss 1.1433 (1.1433) acc 46.8750 (46.8750) lr 1.0000e-05 eta 0:08:34
 epoch [1/50] batch [2/2] time 0.186 (2.693) data 0.000 (0.177) loss 1.1827 (1.1630) acc 56.2500 (51.5625) lr 2.0000e-03 eta 0:04:23
 epoch [2/50] batch [1/2] time 0.757 (0.757) data 0.568 (0.568) loss 1.3218 (1.3218) acc 53.1250 (53.1250) lr 2.0000e-03 eta 0:01:13
@@ -439,7 +439,7 @@ epoch [49/50] batch [1/2] time 0.758 (0.758) data 0.571 (0.571) loss 0.1314 (0.1
 epoch [49/50] batch [2/2] time 0.209 (0.483) data 0.000 (0.286) loss 0.2588 (0.1951) acc 93.7500 (95.3125) lr 7.8853e-06 eta 0:00:00
 epoch [50/50] batch [1/2] time 0.828 (0.828) data 0.625 (0.625) loss 0.1426 (0.1426) acc 96.8750 (96.8750) lr 7.8853e-06 eta 0:00:00
 epoch [50/50] batch [2/2] time 0.201 (0.515) data 0.000 (0.313) loss 0.3562 (0.2494) acc 90.6250 (93.7500) lr 1.9733e-06 eta 0:00:00
-Checkpoint saved to /home/svosve/Music/ma/ResPro/output/base2new/train_base/eurosat/shots_16_8.0/ResidualPrompting_transformer_True/vit_b16_ep50_ctxv1/seed1/prompt_learner/model.pth.tar-50
+Checkpoint saved to /home/svosve/Music/ma/ResPro/output/base2new/train_base/eurosat/shots_16_8.0/PRE_transformer_True/vit_b16_ep50_ctxv1/seed1/prompt_learner/model.pth.tar-50
 Finish training
 Deploy the last-epoch model
 Evaluate on the *test* set

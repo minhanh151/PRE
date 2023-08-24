@@ -2,21 +2,21 @@
 ** Arguments **
 ***************
 backbone: 
-config_file: /home/svosve/Music/ma/ResPro/configs/trainers/ResidualPrompting/vit_b16_ep50_ctxv1.yaml
+config_file: /home/svosve/Music/ma/ResPro/configs/trainers/PRE/vit_b16_ep50_ctxv1.yaml
 dataset_config_file: /home/svosve/Music/ma/ResPro/configs/datasets/stanford_cars.yaml
 eval_only: False
 head: 
 load_epoch: None
 model_dir: 
 no_train: False
-opts: ['TRAINER.COOP.N_CTX', '4', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.W', '8.0', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'TRAINER.ResidualPrompting.MLP', 'MLP1', 'TRAINER.ResidualPrompting.RESIDUAL', 'True', 'TRAINER.ResidualPrompting.SEPARATE', 'True', 'DATASET.NUM_SHOTS', '8', 'DATASET.SUBSAMPLE_CLASSES', 'base']
-output_dir: /home/svosve/Music/ma/ResPro/output/base2new/train_base/stanford_cars/shots_8_8.0/ResidualPrompting_MLP1_True_True/vit_b16_ep50_ctxv1/seed1
+opts: ['TRAINER.COOP.N_CTX', '4', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.W', '8.0', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'TRAINER.PRE.ENCODER', 'MLP1', 'TRAINER.PRE.RESIDUAL', 'True', 'TRAINER.PRE.SEPARATE', 'True', 'DATASET.NUM_SHOTS', '8', 'DATASET.SUBSAMPLE_CLASSES', 'base']
+output_dir: /home/svosve/Music/ma/ResPro/output/base2new/train_base/stanford_cars/shots_8_8.0/PRE_MLP1_True_True/vit_b16_ep50_ctxv1/seed1
 resume: 
 root: /home/svosve/Music/ma/ResPro/DATA
 seed: 1
 source_domains: None
 target_domains: None
-trainer: ResidualPrompting
+trainer: PRE
 transforms: None
 ************
 ** Config **
@@ -113,7 +113,7 @@ OPTIM:
   WARMUP_RECOUNT: True
   WARMUP_TYPE: constant
   WEIGHT_DECAY: 0.0005
-OUTPUT_DIR: /home/svosve/Music/ma/ResPro/output/base2new/train_base/stanford_cars/shots_8_8.0/ResidualPrompting_MLP1_True_True/vit_b16_ep50_ctxv1/seed1
+OUTPUT_DIR: /home/svosve/Music/ma/ResPro/output/base2new/train_base/stanford_cars/shots_8_8.0/PRE_MLP1_True_True/vit_b16_ep50_ctxv1/seed1
 RESUME: 
 SEED: 1
 TEST:
@@ -194,7 +194,7 @@ TRAINER:
     WEIGHT_U: 100.0
   MME:
     LMDA: 0.1
-  NAME: ResidualPrompting
+  NAME: PRE
   PLOT:
     CLASS_TOKEN_POSITION: end
     CSC: False
@@ -202,7 +202,7 @@ TRAINER:
     N: 4
     N_CTX: 16
     PREC: amp
-  ResidualPrompting:
+  PRE:
     CLASS_TOKEN_POSITION: end
     CSC: False
     CTX_INIT: a photo of a
@@ -303,7 +303,7 @@ Versions of relevant libraries:
 [conda] torchvision               0.15.2                   pypi_0    pypi
         Pillow (10.0.0)
 
-Loading trainer: ResidualPrompting
+Loading trainer: PRE
 Loading dataset: StanfordCars
 Reading split from /home/svosve/Music/ma/ResPro/DATA/stanford_cars/split_zhou_StanfordCars.json
 Creating a 8-shot dataset
@@ -344,7 +344,7 @@ Turning off gradients in both the image and the text encoder
 Multiple GPUs detected (n_gpus=4), use all of them!
 Loading evaluator: Classification
 No checkpoint found, train from scratch
-Initialize tensorboard (log_dir=/home/svosve/Music/ma/ResPro/output/base2new/train_base/stanford_cars/shots_8_8.0/ResidualPrompting_MLP1_True_True/vit_b16_ep50_ctxv1/seed1/tensorboard)
+Initialize tensorboard (log_dir=/home/svosve/Music/ma/ResPro/output/base2new/train_base/stanford_cars/shots_8_8.0/PRE_MLP1_True_True/vit_b16_ep50_ctxv1/seed1/tensorboard)
 epoch [1/50] batch [5/24] time 0.103 (0.793) data 0.000 (0.447) loss 1.6711 (1.5960) acc 46.8750 (51.8750) lr 1.0000e-05 eta 0:15:47
 epoch [1/50] batch [10/24] time 0.103 (0.477) data 0.000 (0.252) loss 1.5799 (1.6857) acc 50.0000 (48.4375) lr 1.0000e-05 eta 0:09:27
 epoch [1/50] batch [15/24] time 0.104 (0.352) data 0.000 (0.168) loss 1.6802 (1.7886) acc 53.1250 (42.7083) lr 1.0000e-05 eta 0:06:57
@@ -545,7 +545,7 @@ epoch [50/50] batch [5/24] time 0.101 (0.232) data 0.000 (0.130) loss 1.2807 (1.
 epoch [50/50] batch [10/24] time 0.099 (0.166) data 0.000 (0.065) loss 1.8682 (1.3187) acc 46.8750 (58.7500) lr 7.8853e-06 eta 0:00:02
 epoch [50/50] batch [15/24] time 0.100 (0.144) data 0.000 (0.044) loss 0.8766 (1.3020) acc 68.7500 (58.3333) lr 7.8853e-06 eta 0:00:01
 epoch [50/50] batch [20/24] time 0.102 (0.133) data 0.000 (0.033) loss 1.3268 (1.3022) acc 56.2500 (58.7500) lr 7.8853e-06 eta 0:00:00
-Checkpoint saved to /home/svosve/Music/ma/ResPro/output/base2new/train_base/stanford_cars/shots_8_8.0/ResidualPrompting_MLP1_True_True/vit_b16_ep50_ctxv1/seed1/prompt_learner/model.pth.tar-50
+Checkpoint saved to /home/svosve/Music/ma/ResPro/output/base2new/train_base/stanford_cars/shots_8_8.0/PRE_MLP1_True_True/vit_b16_ep50_ctxv1/seed1/prompt_learner/model.pth.tar-50
 Finish training
 Deploy the last-epoch model
 Evaluate on the *test* set

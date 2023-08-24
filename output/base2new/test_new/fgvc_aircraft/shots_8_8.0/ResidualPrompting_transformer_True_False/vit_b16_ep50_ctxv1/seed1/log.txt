@@ -2,21 +2,21 @@
 ** Arguments **
 ***************
 backbone: 
-config_file: /home/svosve/Music/ma/ResPro/configs/trainers/ResidualPrompting/vit_b16_ep50_ctxv1.yaml
+config_file: /home/svosve/Music/ma/ResPro/configs/trainers/PRE/vit_b16_ep50_ctxv1.yaml
 dataset_config_file: /home/svosve/Music/ma/ResPro/configs/datasets/fgvc_aircraft.yaml
 eval_only: True
 head: 
 load_epoch: 50
-model_dir: /home/svosve/Music/ma/ResPro/output/base2new/train_base/fgvc_aircraft/shots_8_8.0/ResidualPrompting_transformer_True_False/vit_b16_ep50_ctxv1/seed1
+model_dir: /home/svosve/Music/ma/ResPro/output/base2new/train_base/fgvc_aircraft/shots_8_8.0/PRE_transformer_True_False/vit_b16_ep50_ctxv1/seed1
 no_train: False
-opts: ['TRAINER.COOP.N_CTX', '4', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'TRAINER.ResidualPrompting.MLP', 'transformer', 'TRAINER.ResidualPrompting.RESIDUAL', 'True', 'TRAINER.ResidualPrompting.SEPARATE', 'False', 'DATASET.NUM_SHOTS', '8', 'DATASET.SUBSAMPLE_CLASSES', 'new']
-output_dir: /home/svosve/Music/ma/ResPro/output/base2new/test_new/fgvc_aircraft/shots_8_8.0/ResidualPrompting_transformer_True_False/vit_b16_ep50_ctxv1/seed1
+opts: ['TRAINER.COOP.N_CTX', '4', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'TRAINER.PRE.ENCODER', 'transformer', 'TRAINER.PRE.RESIDUAL', 'True', 'TRAINER.PRE.SEPARATE', 'False', 'DATASET.NUM_SHOTS', '8', 'DATASET.SUBSAMPLE_CLASSES', 'new']
+output_dir: /home/svosve/Music/ma/ResPro/output/base2new/test_new/fgvc_aircraft/shots_8_8.0/PRE_transformer_True_False/vit_b16_ep50_ctxv1/seed1
 resume: 
 root: /home/svosve/Music/ma/ResPro/DATA
 seed: 1
 source_domains: None
 target_domains: None
-trainer: ResidualPrompting
+trainer: PRE
 transforms: None
 ************
 ** Config **
@@ -113,7 +113,7 @@ OPTIM:
   WARMUP_RECOUNT: True
   WARMUP_TYPE: constant
   WEIGHT_DECAY: 0.0005
-OUTPUT_DIR: /home/svosve/Music/ma/ResPro/output/base2new/test_new/fgvc_aircraft/shots_8_8.0/ResidualPrompting_transformer_True_False/vit_b16_ep50_ctxv1/seed1
+OUTPUT_DIR: /home/svosve/Music/ma/ResPro/output/base2new/test_new/fgvc_aircraft/shots_8_8.0/PRE_transformer_True_False/vit_b16_ep50_ctxv1/seed1
 RESUME: 
 SEED: 1
 TEST:
@@ -194,7 +194,7 @@ TRAINER:
     WEIGHT_U: 100.0
   MME:
     LMDA: 0.1
-  NAME: ResidualPrompting
+  NAME: PRE
   PLOT:
     CLASS_TOKEN_POSITION: end
     CSC: False
@@ -202,7 +202,7 @@ TRAINER:
     N: 4
     N_CTX: 16
     PREC: amp
-  ResidualPrompting:
+  PRE:
     CLASS_TOKEN_POSITION: end
     CSC: False
     CTX_INIT: a photo of a
@@ -303,7 +303,7 @@ Versions of relevant libraries:
 [conda] torchvision               0.15.2                   pypi_0    pypi
         Pillow (10.0.0)
 
-Loading trainer: ResidualPrompting
+Loading trainer: PRE
 Loading dataset: FGVCAircraft
 Loading preprocessed few-shot data from /home/svosve/Music/ma/ResPro/DATA/fgvc_aircraft/data/split_fewshot/shot_8-seed_1.pkl
 SUBSAMPLE NEW CLASSES!
@@ -333,7 +333,7 @@ Using skip connection in MLP
 Turning off gradients in both the image and the text encoder
 Multiple GPUs detected (n_gpus=4), use all of them!
 Loading evaluator: Classification
-Loading weights to prompt_learner from "/home/svosve/Music/ma/ResPro/output/base2new/train_base/fgvc_aircraft/shots_8_8.0/ResidualPrompting_transformer_True_False/vit_b16_ep50_ctxv1/seed1/prompt_learner/model.pth.tar-50" (epoch = 50)
+Loading weights to prompt_learner from "/home/svosve/Music/ma/ResPro/output/base2new/train_base/fgvc_aircraft/shots_8_8.0/PRE_transformer_True_False/vit_b16_ep50_ctxv1/seed1/prompt_learner/model.pth.tar-50" (epoch = 50)
 Evaluate on the *test* set
 => result
 * total: 1,667

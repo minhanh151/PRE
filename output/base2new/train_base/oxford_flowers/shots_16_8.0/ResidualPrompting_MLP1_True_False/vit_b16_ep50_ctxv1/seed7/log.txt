@@ -2,21 +2,21 @@
 ** Arguments **
 ***************
 backbone: 
-config_file: /home/svosve/Music/ma/ResPro/configs/trainers/ResidualPrompting/vit_b16_ep50_ctxv1.yaml
+config_file: /home/svosve/Music/ma/ResPro/configs/trainers/PRE/vit_b16_ep50_ctxv1.yaml
 dataset_config_file: /home/svosve/Music/ma/ResPro/configs/datasets/oxford_flowers.yaml
 eval_only: False
 head: 
 load_epoch: None
 model_dir: 
 no_train: False
-opts: ['TRAINER.COOP.N_CTX', '4', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.W', '8.0', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'TRAINER.ResidualPrompting.MLP', 'MLP1', 'TRAINER.ResidualPrompting.RESIDUAL', 'True', 'TRAINER.ResidualPrompting.SEPARATE', 'False', 'DATASET.NUM_SHOTS', '16', 'DATASET.SUBSAMPLE_CLASSES', 'base']
-output_dir: /home/svosve/Music/ma/ResPro/output/base2new/train_base/oxford_flowers/shots_16_8.0/ResidualPrompting_MLP1_True_False/vit_b16_ep50_ctxv1/seed7
+opts: ['TRAINER.COOP.N_CTX', '4', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.W', '8.0', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'TRAINER.PRE.ENCODER', 'MLP1', 'TRAINER.PRE.RESIDUAL', 'True', 'TRAINER.PRE.SEPARATE', 'False', 'DATASET.NUM_SHOTS', '16', 'DATASET.SUBSAMPLE_CLASSES', 'base']
+output_dir: /home/svosve/Music/ma/ResPro/output/base2new/train_base/oxford_flowers/shots_16_8.0/PRE_MLP1_True_False/vit_b16_ep50_ctxv1/seed7
 resume: 
 root: /home/svosve/Music/ma/ResPro/DATA
 seed: 7
 source_domains: None
 target_domains: None
-trainer: ResidualPrompting
+trainer: PRE
 transforms: None
 ************
 ** Config **
@@ -113,7 +113,7 @@ OPTIM:
   WARMUP_RECOUNT: True
   WARMUP_TYPE: constant
   WEIGHT_DECAY: 0.0005
-OUTPUT_DIR: /home/svosve/Music/ma/ResPro/output/base2new/train_base/oxford_flowers/shots_16_8.0/ResidualPrompting_MLP1_True_False/vit_b16_ep50_ctxv1/seed7
+OUTPUT_DIR: /home/svosve/Music/ma/ResPro/output/base2new/train_base/oxford_flowers/shots_16_8.0/PRE_MLP1_True_False/vit_b16_ep50_ctxv1/seed7
 RESUME: 
 SEED: 7
 TEST:
@@ -194,7 +194,7 @@ TRAINER:
     WEIGHT_U: 100.0
   MME:
     LMDA: 0.1
-  NAME: ResidualPrompting
+  NAME: PRE
   PLOT:
     CLASS_TOKEN_POSITION: end
     CSC: False
@@ -202,7 +202,7 @@ TRAINER:
     N: 4
     N_CTX: 16
     PREC: amp
-  ResidualPrompting:
+  PRE:
     CLASS_TOKEN_POSITION: end
     CSC: False
     CTX_INIT: a photo of a
@@ -303,7 +303,7 @@ Versions of relevant libraries:
 [conda] torchvision               0.15.2                   pypi_0    pypi
         Pillow (10.0.0)
 
-Loading trainer: ResidualPrompting
+Loading trainer: PRE
 Loading dataset: OxfordFlowers
 Reading split from /home/svosve/Music/ma/ResPro/DATA/oxford_flowers/split_zhou_OxfordFlowers.json
 Loading preprocessed few-shot data from /home/svosve/Music/ma/ResPro/DATA/oxford_flowers/split_fewshot/shot_16-seed_7.pkl
@@ -335,7 +335,7 @@ Turning off gradients in both the image and the text encoder
 Multiple GPUs detected (n_gpus=4), use all of them!
 Loading evaluator: Classification
 No checkpoint found, train from scratch
-Initialize tensorboard (log_dir=/home/svosve/Music/ma/ResPro/output/base2new/train_base/oxford_flowers/shots_16_8.0/ResidualPrompting_MLP1_True_False/vit_b16_ep50_ctxv1/seed7/tensorboard)
+Initialize tensorboard (log_dir=/home/svosve/Music/ma/ResPro/output/base2new/train_base/oxford_flowers/shots_16_8.0/PRE_MLP1_True_False/vit_b16_ep50_ctxv1/seed7/tensorboard)
 epoch [1/50] batch [5/25] time 0.073 (0.434) data 0.000 (0.124) loss 3.7625 (4.0369) acc 31.2500 (28.7500) lr 1.0000e-05 eta 0:09:00
 epoch [1/50] batch [10/25] time 0.074 (0.254) data 0.000 (0.062) loss 4.3370 (4.1167) acc 28.1250 (27.1875) lr 1.0000e-05 eta 0:05:14
 epoch [1/50] batch [15/25] time 0.075 (0.194) data 0.000 (0.041) loss 2.7870 (3.8813) acc 43.7500 (30.4167) lr 1.0000e-05 eta 0:04:00
@@ -586,7 +586,7 @@ epoch [50/50] batch [10/25] time 0.079 (0.137) data 0.000 (0.057) loss 0.6811 (0
 epoch [50/50] batch [15/25] time 0.078 (0.117) data 0.000 (0.038) loss 0.6511 (0.5852) acc 81.2500 (84.1667) lr 7.8853e-06 eta 0:00:01
 epoch [50/50] batch [20/25] time 0.079 (0.108) data 0.000 (0.029) loss 0.4904 (0.6131) acc 87.5000 (82.8125) lr 7.8853e-06 eta 0:00:00
 epoch [50/50] batch [25/25] time 0.079 (0.102) data 0.000 (0.023) loss 0.8162 (0.6361) acc 75.0000 (81.7500) lr 1.9733e-06 eta 0:00:00
-Checkpoint saved to /home/svosve/Music/ma/ResPro/output/base2new/train_base/oxford_flowers/shots_16_8.0/ResidualPrompting_MLP1_True_False/vit_b16_ep50_ctxv1/seed7/prompt_learner/model.pth.tar-50
+Checkpoint saved to /home/svosve/Music/ma/ResPro/output/base2new/train_base/oxford_flowers/shots_16_8.0/PRE_MLP1_True_False/vit_b16_ep50_ctxv1/seed7/prompt_learner/model.pth.tar-50
 Finish training
 Deploy the last-epoch model
 Evaluate on the *test* set

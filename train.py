@@ -33,7 +33,7 @@ import trainers.cocoop
 import trainers.zsclip
 import trainers.prograd
 import trainers.plot
-import trainers.residual_prompting
+import trainers.pre
 def print_args(args, cfg):
     print("***************")
     print("** Arguments **")
@@ -115,15 +115,15 @@ def extend_cfg(cfg):
     cfg.TRAINER.PLOT.CLASS_TOKEN_POSITION = "end"  # 'middle' or 'end' or 'front'
     cfg.TRAINER.PLOT.N = 4 # the number of prompts
 
-    cfg.TRAINER.ResidualPrompting = CN()
-    cfg.TRAINER.ResidualPrompting.N_CTX = 16  # number of context vectors
-    cfg.TRAINER.ResidualPrompting.CSC = False  # class-specific context
-    cfg.TRAINER.ResidualPrompting.CTX_INIT = ""  # initialization words
-    cfg.TRAINER.ResidualPrompting.PREC = "amp"  # fp16, fp32, amp
-    cfg.TRAINER.ResidualPrompting.CLASS_TOKEN_POSITION = "end"  # 'middle' or 'end' or 'front'
-    cfg.TRAINER.ResidualPrompting.MLP = "MLP1"
-    cfg.TRAINER.ResidualPrompting.RESIDUAL = True
-    cfg.TRAINER.ResidualPrompting.SEPARATE = True
+    cfg.TRAINER.PRE = CN()
+    cfg.TRAINER.PRE.N_CTX = 16  # number of context vectors
+    cfg.TRAINER.PRE.CSC = False  # class-specific context
+    cfg.TRAINER.PRE.CTX_INIT = ""  # initialization words
+    cfg.TRAINER.PRE.PREC = "amp"  # fp16, fp32, amp
+    cfg.TRAINER.PRE.CLASS_TOKEN_POSITION = "end"  # 'middle' or 'end' or 'front'
+    cfg.TRAINER.PRE.ENCODER = "MLP1"
+    cfg.TRAINER.PRE.RESIDUAL = True
+    cfg.TRAINER.PRE.SEPARATE = True
     
     cfg.DATASET.SUBSAMPLE_CLASSES = "all"  # all, base or new
     """

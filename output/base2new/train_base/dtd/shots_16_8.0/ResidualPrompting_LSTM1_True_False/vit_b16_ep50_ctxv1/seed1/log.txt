@@ -2,21 +2,21 @@
 ** Arguments **
 ***************
 backbone: 
-config_file: /home/svosve/Music/ma/ResPro/configs/trainers/ResidualPrompting/vit_b16_ep50_ctxv1.yaml
+config_file: /home/svosve/Music/ma/ResPro/configs/trainers/PRE/vit_b16_ep50_ctxv1.yaml
 dataset_config_file: /home/svosve/Music/ma/ResPro/configs/datasets/dtd.yaml
 eval_only: False
 head: 
 load_epoch: None
 model_dir: 
 no_train: False
-opts: ['TRAINER.COOP.N_CTX', '4', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.W', '8.0', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'TRAINER.ResidualPrompting.MLP', 'LSTM1', 'TRAINER.ResidualPrompting.RESIDUAL', 'True', 'TRAINER.ResidualPrompting.SEPARATE', 'False', 'DATASET.NUM_SHOTS', '16', 'DATASET.SUBSAMPLE_CLASSES', 'base']
-output_dir: /home/svosve/Music/ma/ResPro/output/base2new/train_base/dtd/shots_16_8.0/ResidualPrompting_LSTM1_True_False/vit_b16_ep50_ctxv1/seed1
+opts: ['TRAINER.COOP.N_CTX', '4', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.W', '8.0', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'TRAINER.PRE.ENCODER', 'LSTM1', 'TRAINER.PRE.RESIDUAL', 'True', 'TRAINER.PRE.SEPARATE', 'False', 'DATASET.NUM_SHOTS', '16', 'DATASET.SUBSAMPLE_CLASSES', 'base']
+output_dir: /home/svosve/Music/ma/ResPro/output/base2new/train_base/dtd/shots_16_8.0/PRE_LSTM1_True_False/vit_b16_ep50_ctxv1/seed1
 resume: 
 root: /home/svosve/Music/ma/ResPro/DATA
 seed: 1
 source_domains: None
 target_domains: None
-trainer: ResidualPrompting
+trainer: PRE
 transforms: None
 ************
 ** Config **
@@ -113,7 +113,7 @@ OPTIM:
   WARMUP_RECOUNT: True
   WARMUP_TYPE: constant
   WEIGHT_DECAY: 0.0005
-OUTPUT_DIR: /home/svosve/Music/ma/ResPro/output/base2new/train_base/dtd/shots_16_8.0/ResidualPrompting_LSTM1_True_False/vit_b16_ep50_ctxv1/seed1
+OUTPUT_DIR: /home/svosve/Music/ma/ResPro/output/base2new/train_base/dtd/shots_16_8.0/PRE_LSTM1_True_False/vit_b16_ep50_ctxv1/seed1
 RESUME: 
 SEED: 1
 TEST:
@@ -194,7 +194,7 @@ TRAINER:
     WEIGHT_U: 100.0
   MME:
     LMDA: 0.1
-  NAME: ResidualPrompting
+  NAME: PRE
   PLOT:
     CLASS_TOKEN_POSITION: end
     CSC: False
@@ -202,7 +202,7 @@ TRAINER:
     N: 4
     N_CTX: 16
     PREC: amp
-  ResidualPrompting:
+  PRE:
     CLASS_TOKEN_POSITION: end
     CSC: False
     CTX_INIT: a photo of a
@@ -289,7 +289,7 @@ Versions of relevant libraries:
 [conda] torchvision               0.15.2                   pypi_0    pypi
         Pillow (10.0.0)
 
-Loading trainer: ResidualPrompting
+Loading trainer: PRE
 Loading dataset: DescribableTextures
 Reading split from /home/svosve/Music/ma/ResPro/DATA/dtd/split_zhou_DescribableTextures.json
 Loading preprocessed few-shot data from /home/svosve/Music/ma/ResPro/DATA/dtd/split_fewshot/shot_16-seed_1.pkl
@@ -321,7 +321,7 @@ Turning off gradients in both the image and the text encoder
 No GPU
 Loading evaluator: Classification
 No checkpoint found, train from scratch
-Initialize tensorboard (log_dir=/home/svosve/Music/ma/ResPro/output/base2new/train_base/dtd/shots_16_8.0/ResidualPrompting_LSTM1_True_False/vit_b16_ep50_ctxv1/seed1/tensorboard)
+Initialize tensorboard (log_dir=/home/svosve/Music/ma/ResPro/output/base2new/train_base/dtd/shots_16_8.0/PRE_LSTM1_True_False/vit_b16_ep50_ctxv1/seed1/tensorboard)
 epoch [1/50] batch [5/12] time 3.299 (4.578) data 0.004 (0.735) loss 1.6189 (2.0655) acc 53.1250 (44.3750) lr 1.0000e-05 eta 0:45:24
 epoch [1/50] batch [10/12] time 2.811 (3.749) data 0.007 (0.371) loss 1.6532 (2.0703) acc 53.1250 (45.0000) lr 1.0000e-05 eta 0:36:52
 epoch [2/50] batch [5/12] time 2.973 (3.663) data 0.005 (0.133) loss 1.1967 (1.6498) acc 71.8750 (56.8750) lr 2.0000e-03 eta 0:35:35
@@ -422,7 +422,7 @@ epoch [49/50] batch [5/12] time 3.062 (3.503) data 0.003 (0.105) loss 0.4161 (0.
 epoch [49/50] batch [10/12] time 3.000 (3.233) data 0.004 (0.056) loss 0.4591 (0.5502) acc 84.3750 (81.5625) lr 1.7713e-05 eta 0:00:45
 epoch [50/50] batch [5/12] time 3.211 (3.730) data 0.010 (0.126) loss 0.3027 (0.4791) acc 87.5000 (85.0000) lr 7.8853e-06 eta 0:00:26
 epoch [50/50] batch [10/12] time 3.216 (3.386) data 0.007 (0.067) loss 0.3883 (0.5099) acc 90.6250 (83.7500) lr 7.8853e-06 eta 0:00:06
-Checkpoint saved to /home/svosve/Music/ma/ResPro/output/base2new/train_base/dtd/shots_16_8.0/ResidualPrompting_LSTM1_True_False/vit_b16_ep50_ctxv1/seed1/prompt_learner/model.pth.tar-50
+Checkpoint saved to /home/svosve/Music/ma/ResPro/output/base2new/train_base/dtd/shots_16_8.0/PRE_LSTM1_True_False/vit_b16_ep50_ctxv1/seed1/prompt_learner/model.pth.tar-50
 Finish training
 Deploy the last-epoch model
 Evaluate on the *test* set

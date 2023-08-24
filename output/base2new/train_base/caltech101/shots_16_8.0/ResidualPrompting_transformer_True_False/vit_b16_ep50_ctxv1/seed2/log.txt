@@ -2,21 +2,21 @@
 ** Arguments **
 ***************
 backbone: 
-config_file: /home/svosve/Music/ma/ResPro/configs/trainers/ResidualPrompting/vit_b16_ep50_ctxv1.yaml
+config_file: /home/svosve/Music/ma/ResPro/configs/trainers/PRE/vit_b16_ep50_ctxv1.yaml
 dataset_config_file: /home/svosve/Music/ma/ResPro/configs/datasets/caltech101.yaml
 eval_only: False
 head: 
 load_epoch: None
 model_dir: 
 no_train: False
-opts: ['TRAINER.COOP.N_CTX', '16', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.W', '8.0', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'TRAINER.ResidualPrompting.MLP', 'transformer', 'TRAINER.ResidualPrompting.RESIDUAL', 'True', 'DATASET.NUM_SHOTS', '16', 'DATASET.SUBSAMPLE_CLASSES', 'base']
-output_dir: /home/svosve/Music/ma/ResPro/output/base2new/train_base/caltech101/shots_16_8.0/ResidualPrompting_transformer_True/vit_b16_ep50_ctxv1/seed2
+opts: ['TRAINER.COOP.N_CTX', '16', 'TRAINER.COOP.CSC', 'False', 'TRAINER.COOP.W', '8.0', 'TRAINER.COOP.CLASS_TOKEN_POSITION', 'end', 'TRAINER.PRE.ENCODER', 'transformer', 'TRAINER.PRE.RESIDUAL', 'True', 'DATASET.NUM_SHOTS', '16', 'DATASET.SUBSAMPLE_CLASSES', 'base']
+output_dir: /home/svosve/Music/ma/ResPro/output/base2new/train_base/caltech101/shots_16_8.0/PRE_transformer_True/vit_b16_ep50_ctxv1/seed2
 resume: 
 root: /home/svosve/Music/ma/ResPro/DATA
 seed: 2
 source_domains: None
 target_domains: None
-trainer: ResidualPrompting
+trainer: PRE
 transforms: None
 ************
 ** Config **
@@ -113,7 +113,7 @@ OPTIM:
   WARMUP_RECOUNT: True
   WARMUP_TYPE: constant
   WEIGHT_DECAY: 0.0005
-OUTPUT_DIR: /home/svosve/Music/ma/ResPro/output/base2new/train_base/caltech101/shots_16_8.0/ResidualPrompting_transformer_True/vit_b16_ep50_ctxv1/seed2
+OUTPUT_DIR: /home/svosve/Music/ma/ResPro/output/base2new/train_base/caltech101/shots_16_8.0/PRE_transformer_True/vit_b16_ep50_ctxv1/seed2
 RESUME: 
 SEED: 2
 TEST:
@@ -194,7 +194,7 @@ TRAINER:
     WEIGHT_U: 100.0
   MME:
     LMDA: 0.1
-  NAME: ResidualPrompting
+  NAME: PRE
   PLOT:
     CLASS_TOKEN_POSITION: end
     CSC: False
@@ -202,7 +202,7 @@ TRAINER:
     N: 4
     N_CTX: 16
     PREC: amp
-  ResidualPrompting:
+  PRE:
     CLASS_TOKEN_POSITION: end
     CSC: False
     CTX_INIT: 
@@ -302,7 +302,7 @@ Versions of relevant libraries:
 [conda] torchvision               0.15.2                   pypi_0    pypi
         Pillow (10.0.0)
 
-Loading trainer: ResidualPrompting
+Loading trainer: PRE
 Loading dataset: Caltech101
 Reading split from /home/svosve/Music/ma/ResPro/DATA/caltech-101/split_zhou_Caltech101.json
 Creating a 16-shot dataset
@@ -340,7 +340,7 @@ Turning off gradients in both the image and the text encoder
 Multiple GPUs detected (n_gpus=4), use all of them!
 Loading evaluator: Classification
 No checkpoint found, train from scratch
-Initialize tensorboard (log_dir=/home/svosve/Music/ma/ResPro/output/base2new/train_base/caltech101/shots_16_8.0/ResidualPrompting_transformer_True/vit_b16_ep50_ctxv1/seed2/tensorboard)
+Initialize tensorboard (log_dir=/home/svosve/Music/ma/ResPro/output/base2new/train_base/caltech101/shots_16_8.0/PRE_transformer_True/vit_b16_ep50_ctxv1/seed2/tensorboard)
 epoch [1/50] batch [5/25] time 0.391 (1.319) data 0.000 (0.108) loss 1.1432 (1.2200) acc 71.8750 (73.7500) lr 1.0000e-05 eta 0:27:22
 epoch [1/50] batch [10/25] time 0.198 (0.761) data 0.000 (0.054) loss 0.7403 (1.1812) acc 87.5000 (72.8125) lr 1.0000e-05 eta 0:15:44
 epoch [1/50] batch [15/25] time 0.204 (0.576) data 0.000 (0.036) loss 0.5293 (1.0541) acc 75.0000 (73.1250) lr 1.0000e-05 eta 0:11:51
@@ -591,7 +591,7 @@ epoch [50/50] batch [10/25] time 0.184 (0.266) data 0.000 (0.060) loss 0.5318 (0
 epoch [50/50] batch [15/25] time 0.199 (0.245) data 0.000 (0.040) loss 0.7077 (0.4580) acc 78.1250 (86.4583) lr 7.8853e-06 eta 0:00:02
 epoch [50/50] batch [20/25] time 0.197 (0.236) data 0.000 (0.030) loss 1.0189 (0.4893) acc 75.0000 (85.3125) lr 7.8853e-06 eta 0:00:01
 epoch [50/50] batch [25/25] time 0.196 (0.230) data 0.000 (0.024) loss 0.4071 (0.4742) acc 87.5000 (86.3750) lr 1.9733e-06 eta 0:00:00
-Checkpoint saved to /home/svosve/Music/ma/ResPro/output/base2new/train_base/caltech101/shots_16_8.0/ResidualPrompting_transformer_True/vit_b16_ep50_ctxv1/seed2/prompt_learner/model.pth.tar-50
+Checkpoint saved to /home/svosve/Music/ma/ResPro/output/base2new/train_base/caltech101/shots_16_8.0/PRE_transformer_True/vit_b16_ep50_ctxv1/seed2/prompt_learner/model.pth.tar-50
 Finish training
 Deploy the last-epoch model
 Evaluate on the *test* set
