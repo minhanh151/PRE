@@ -36,8 +36,9 @@ Follow [PRE.md](PRE.md) to see the detailed instructions on how to run the PRE m
 
 ## Models and Results
 
-- The pre-trained weights of CoOp (both M=16 & M=4) on ImageNet based on RN50, RN101, ViT-B/16 and ViT-B/32 can be downloaded altogether via this [link](https://drive.google.com/file/d/18ypxfd82RR0pizc5MM1ZWDYDk4j0BtPF/view?usp=sharing). The weights can be used to reproduce the results in Table 1 of CoOp's paper (i.e., the results on ImageNet and its four variants with domain shift). To load the weights and run the evaluation code, you will need to specify `--model-dir` and `--load-epoch` (see this [script](https://github.com/KaiyangZhou/CoOp/blob/main/scripts/eval.sh) for example).
-- The raw numerical results can be found at this [google drive link](https://docs.google.com/spreadsheets/d/12_kaFdD0nct9aUIrDoreY0qDunQ9q9tv/edit?usp=sharing&ouid=100312610418109826457&rtpof=true&sd=true).
+- The raw numerical results for PRE can be found at this [google drive link](https://docs.google.com/spreadsheets/d/1ktV_LsCKa374duYJxIOCcPEKEl4iCeikxze8-q1jBFo/edit?usp=sharing).
+  
+- The pre-trained weights of PRE (M=4) on Caltech101, OxfordPets, OxfordFlowers, DTD, EuroSAT, FGVC-Aircraft, and Stanford_Cars based on ViT-B/16 can be downloaded altogether on the /output folder in this GitHub project. The weights can be used to reproduce the results in Table 2 of PRE's paper (i.e., the results on all evaluated datasets). To load the weights and run the evaluation code, you will need to specify `--model-dir` and `--load-epoch` - run the base2new_test.sh file in /scripts folder.
 
 
 ```
